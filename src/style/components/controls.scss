@@ -1,0 +1,21 @@
+.controls{
+	width: 100%;
+	height: 40px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	&_current-id, &_formula-select{
+		font-size: 1.15rem;
+		margin: 0 10px;
+	}
+	&_input{
+		outline: none!important;
+        border: 1px solid #999;
+        text-align: right;
+        width: 150px;
+        height: 20px;
+        box-sizing: border-box;
+		background: none;
+		padding: 2px;
+	}
+}
