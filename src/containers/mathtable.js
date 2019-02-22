@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import ControlsContainer from '../containers/controlscontainer';
+import ControlsContainer from './controlscontainer';
 
 import Cell from '../components/cell';
 

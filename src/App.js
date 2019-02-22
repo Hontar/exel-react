@@ -7,7 +7,7 @@ import './style/index.scss';
 // import thunk from 'redux-thunk';
 import { Provider, connect } from 'react-redux';
 
-import {store} from './store.js'
+import {store} from './store/store.js'
 
 import MathTable from './containers/mathtable'
 

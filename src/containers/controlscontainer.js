@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 
-import {actionInputCell} from "../acs";
+import {actionInputCell} from "../store/acs";
 
 class ControlsContainer extends Component {
     // constructor(props){
