@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import ControlsContainer from '../containers/controlscontainer';
 
-import Cell from '../containers/cell';
+import Cell from '../components/cell';
 
 export default class MathTable extends Component {
     constructor(props){

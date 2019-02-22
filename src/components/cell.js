@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import InputComponent from "./controls";
+// import InputComponent from "./controls";
 
 import { connect } from 'react-redux';
 
