@@ -7,6 +7,10 @@
 	&_current-id, &_formula-select{
 		font-size: 1.15rem;
 		margin: 0 10px;
+		
+	}
+	&_formula-select{
+		height: 20px;
 	}
 	&_input{
 		outline: none!important;
@@ -17,5 +21,6 @@
         box-sizing: border-box;
 		background: none;
 		padding: 2px;
+		margin: 0 5px;
 	}
 }

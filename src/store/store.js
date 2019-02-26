@@ -6,21 +6,32 @@ let currentCellReducer = (state, action) => {
       return {
         id: null,
         formula: '',
-        cell: {}
+        cell: {},
+        // selected: false
       }
     }
     if (action.type === 'CELL_CURRENT'){
       return {
         id: action.id,
         formula: action.formula,
-        cell: action.cell
+        cell: action.cell,
+        // selected: 'selected'
+      }
+    }
+    if (action.type === 'CELL_SELECTED'){
+      return {
+        id: action.id,
+        formula: action.formula,
+        cell: action.cell,
+        // selected: 'selected'
       }
     }
     if (state === 'CELL_CLEAR'){
       return {
         id: null,
         formula: '',
-        cell: {}
+        cell: {},
+        // selected: false
       }
     }
   }

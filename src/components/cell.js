@@ -12,53 +12,87 @@ class Cell extends Component {
         id: this.props.cellFromState.id,
         formula: this.props.cell.formula,
         value: this.props.cellFromState.value,
-        showInput: false
+        showInput: false,
+        selected: this.props.cell.selected,
+        pressed: false
       }
     }  
 
     sendFormula = () => this.props.onSend(this.state.id, this.currentCell.value, this.props.cellFromState)
-    changeCell = () => {  
+    changeCellFormula = () => {  
       console.log("input", this.currentCell, this.currentCell.value) 
       if (this.currentCell.value !== this.state.formula)
         this.props.update( this.props.cellFromState, this.currentCell.value);  
       this.setState(prevstate => 
         ({ ...prevstate, showInput: !prevstate.showInput})
-      )
-      
+      )      
     }
+    changeCellView = () => {  
+      // console.log("input", this.currentCell, this.currentCell.value)       
+      this.setState(prevstate => 
+        ({ ...prevstate, showInput: !prevstate.showInput})
+      )      
+    }
+
     setCurrent = () => {
-      // this.props.onClick(this.state.id)
       this.props.onSend(this.state.id, this.props.cellFromState.formula, this.props.cellFromState)
     }
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        if(nextProps.cell.id !== this.props.cellFromState.id) {
-            return false
-        }
+    startSelecting = () => {      
+      this.props.startSelecting(this.state.id)
+    }
+    continueSelecting = () => {      
+      this.props.continueSelecting(this.state.id);     
+    }
+    stopSelecting = () => {
+      this.props.stopSelecting();     
+    }
+
+    
+    shouldComponentUpdate(nextProps, nextState, nextContext) {               
+        if(nextProps.cellFromState.value !== this.props.cellFromState.value)
+          return true;
+        if(nextProps.active !== this.props.active)
+          return true;
+        if(nextProps.cell.id !== this.props.cellFromState.id) 
+          return false; 
         return true
     }
 
-    componentDidUpdate(prevProps, prevState) {
-      this.currentCell.focus();
-    }
+    // componentDidUpdate(prevProps, prevState) {
+    //   this.currentCell.focus();
+    // }
   
     render(){
       let showInput = this.state.showInput
+      let selected 
+      if(this.props.active && this.props.isFirst)
+        selected = "first";
+      else if(this.props.active) 
+        selected = "selected";
+      else 
+        selected = this.props.cellFromState.className;
       console.log("render cell", this.props)
       return(
         <td 
-            className={`table_cell ${this.props.cellFromState.className}`}
+            className={`table_cell ${selected}`}
             onClick = {this.setCurrent}
-            onDoubleClick = {this.changeCell}
-            >   <input 
+            onMouseDown = {this.startSelecting}
+            onMouseEnter = {this.continueSelecting}
+            onMouseUp = {this.stopSelecting}
+            onDoubleClick = {this.changeCellView}
+            >   
+            {this.state.showInput && 
+            <input 
                     className='table-cell input'
                     style = {{display: showInput ? "inline-block" : "none"}}
                     autoFocus = {true}
                     defaultValue={this.props.cellFromState.formula}
                     ref={c => this.currentCell = c}
                     onChange={this.sendFormula}
-                    onBlur={this.changeCell}
+                    onBlur={this.changeCellFormula}
                 /> 
+                } 
                 <span
                   style = {{display: !showInput ? "inline-block" : "none"}}
                 >
@@ -80,10 +114,19 @@ class Cell extends Component {
           value: '',
           id: '',
           className: 'cell'
+        },
+        onSend(id, formula){
+          console.log("onSend isn't set", id, formula)
+        },
+        startSelecting(id){
+          console.log("startSelecting isn't set", id)
+        },
+        continueSelecting(id){
+          console.log("continueSelecting isn't set", id)
+        },
+        stopSelecting(id){
+          console.log("stopSelecting isn't set", id)
         }
-        // onSend(id, formula){
-        //   console.log("onSend isn't set", id, formula)
-        // }
       }
     }
   }

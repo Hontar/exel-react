@@ -1,32 +1,32 @@
 import React, { Component } from 'react';
-// import InputComponent from "./controls";
+import InputComponent from "../components/controls";
 
 import { connect } from 'react-redux';
 
 import {actionInputCell} from "../store/acs";
 
 class ControlsContainer extends Component {
-    // constructor(props){
-    //     super(props)
-    //     this.state = {
-    //         controls:{
-    //             funcSelect: {
-    //                 inputType: 'select',
-    //                 config: {
-    //                     option: [
-    //                         {value: 'f',
-    //                             name: 'f'}, 
-    //                         {value: 'sum',
-    //                             name: 'sum'}, 
-    //                         {value: 'diff',
-    //                             name: 'diff'}, 
-    //                         {value: 'prod',
-    //                             name: 'prod'}, 
-    //                         {value: 'quot',
-    //                             name: 'quot'}
-    //                     ] 
-    //                 }
-    //             },
+    constructor(props){
+        super(props)
+        this.state = {
+            controls:{
+                funcSelect: {
+                    inputType: 'select',
+                    config: {
+                        option: [
+                            {value: 'f',
+                                name: 'f'}, 
+                            {value: 'sum',
+                                name: 'sum'}, 
+                            {value: 'diff',
+                                name: 'diff'}, 
+                            {value: 'prod',
+                                name: 'prod'}, 
+                            {value: 'quot',
+                                name: 'quot'}
+                        ] 
+                    }
+                },
     //             input: {
     //                 value: "",
     //                 config: {
@@ -40,8 +40,9 @@ class ControlsContainer extends Component {
     //             id: "",
     //             formula: ""
     //         }
-    //     }
-    // }
+        }
+    }
+}
     sendFormula = () => this.props.onSend(this.props.cell.id, this.inputCell.value, this.props.cell.cell )
 
     updateState = () => {
@@ -50,7 +51,18 @@ class ControlsContainer extends Component {
             console.log("update")
             this.props.update( this.props.cell.cell, this.inputCell.value)
         }
+        // this.inputCell.value=""
     };
+
+    selectFormula = (e) => {
+        this.inputCell.value = `=${e.target.value}()`
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext){
+        if(nextProps.formula !== this.props.cell.formula)
+            return true;
+        return true
+    }
 
 
     render(){
@@ -60,9 +72,19 @@ class ControlsContainer extends Component {
             <span name='id' className='controls_current-id' > 
                 {this.props.cell.id} 
             </span>
-            <span className='controls_formula-select' > 
+            <InputComponent 
+                inputType='select'
+                config={{
+                    option: this.state.controls.funcSelect.config.option, 
+                    disabled: this.props.cell.id ? false : true,
+                    className: 'controls_formula-select',
+                    onChange: this.selectFormula
+                }}
+
+            />
+            {/* <span className='controls_formula-select' > 
                 f
-            </span>
+            </span> */}
             <input 
                 className='controls_input'
                 name='formula'

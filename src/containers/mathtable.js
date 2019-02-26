@@ -46,70 +46,156 @@ export default class MathTable extends Component {
             }          
           }
         },
-        currentCells: []
-    }
-      this.cellUpdate = this.cellUpdate.bind(this)
-    }
-
-    setCurrentCell = (id) => {
-        this.setState (prevState => 
-            {console.log("cell clicked", id)
-            return ({
-                table: {...prevState.table},
-                currentCells: [...prevState.currentCells, id]
-            })}
-        ) 
+        selection: {
+          selectedCells: [],
+          pressed: false,
+          start: null,
+          end: null
+        }        
+      }
     }
 
-    clearCurrentCell = (e) => {
-        console.log("event target", e.target)
-        this.setState (prevState => (
-            {
-                table: {...prevState.table},
-                currentCells: []
-            }
-        )) 
+    startSelecting = (id) => {      
+        this.setState( prevState => ({ 
+                table: {...prevState.table}, 
+                selection: {
+                  selectedCells: [id],
+                  pressed: true,
+                  start: id,
+                  end: id 
+                }
+              })
+          );       
+    // (id) => {
+    //   let newSelection = id;
+    //   let newSelectionArray;
+   
+    //   if(this.state.selectedCells.indexOf(newSelection) > -1) {
+    //     newSelectionArray = this.state.selectedCells.filter(s => s !== newSelection)
+    //   } else {
+    //     newSelectionArray = [...this.state.selectedCells, newSelection];
+    //   }
+   
+    //     this.setState( prevState => ({ 
+    //       table: {...prevState.table}, 
+    //       selectedCells: newSelectionArray,
+    //       pressed: true 
+    //     })
+    //     )       
     }
-  
-    getCell(obj){
-      let table = []
-      for (var row in obj){        
-          for (var item in obj[row]){
-            table.push(obj[row][item])
-          }        
-      } 
-      console.log("table", table)
-      return table
+
+    continueSelecting = (id) => {
+      if (this.state.selection.pressed && this.state.selection.start !== id ){
+        let newSelectionArray = this.getSelectedCells(this.state, this.state.selection.start, id)
+        this.setState( prevState => ({ 
+          table: {...prevState.table}, 
+          selection: {
+            selectedCells: newSelectionArray,
+            pressed: true,
+            start: prevState.selection.start,
+            end: id 
+          }
+        }));  
+      }        
     }
-  
+
+    getSelectedCells = (data, start, end) => {
+      var selected = [];
+      let range = this.range
+      range(start.charCodeAt(0), end.charCodeAt(0)).map((_col) => {
+        range(+start[1], +end[1]).map((row) => {
+          let col = String.fromCharCode(_col)
+          // console.log("col, row", col, row, data[col][row])
+          // if (data[col] && data[col][row]) {
+            selected.push((col+row));
+          // }
+        });
+      });
+      return selected;
+    }
+
+    range = (start, end) => {
+      var array = [];
+      var inc = end - start > 0;
+      for (var i = start; inc ? i <= end : i >= end; inc ? i++ : i--) {
+        inc ? array.push(i) : array.unshift(i);
+      }
+      return array;
+    };
+
+    stopSelecting = () => {
+        
+        this.setState( prevState => ({ 
+          table: {...prevState.table}, 
+          selection: {
+            ...prevState.selection,
+            pressed: false,            
+          }
+        }));  
+    }    
     
-    calculateValue= (state, id, formula) => {
+    calculateValue= (state, formula) => {
       let _value = null
       let updatedFormula = ""
       console.log("formula", formula, typeof formula)
           if(formula.charAt(0) !== '='){ 
             console.log("value=formula", formula, typeof formula)        
             return {formula: formula,
-                    value: formula}
-            
+                    value: formula}            
           } else {
-            try {console.log("eval", formula, typeof formula)
-                let matches = formula.match(/[A_Z][1-9]+/g) || []
-                console.log("matches", matches)
+            try {
+              console.log("eval", formula, typeof formula)
+              let divNull = formula.search(/\/(?=0)+/g)
+              if (divNull > 0)
+                return {formula: formula,
+                  value: '#DIV/0!'};
+              let notProperSymbols = formula.search(/[^*/+=()\-0-9A-Z]+/g)
+              if (notProperSymbols > 0)
+                return {formula: formula,
+                  value: '#NAME?'};
+              let matches = formula.match(/[A_Z][1-9]+/g) || []
+              console.log("matches", matches)
+              if (matches){
                 matches.forEach(match => {
                   let foundValue = state[match[0]][match[1]].value
+                  console.log("foundValue", foundValue)
                   return updatedFormula = formula.replace(match, foundValue)
                 })
-                            
-                _value = eval(updatedFormula.substring(1))
-                return {formula: formula,
-                        value: _value}
-              } 
-              catch(e) {
+                console.log("updatedFormula", updatedFormula)  
+                let operation = formula.substr(1,3)
+                let operationFormula = null
+                switch(operation){
+                  case ('sum'): {
+                    operationFormula = formula.slice(4).split(';').join('+')
+                    _value = eval(operationFormula)
+                    break
+                  }
+                  case ('dif'): {
+                    operationFormula = formula.slice(5).split(';').join('-')
+                    _value = eval(operationFormula)
+                    break
+                  }
+                  case ('pro'): {
+                    operationFormula = formula.slice(5).split(';').join('*')
+                    _value = eval(operationFormula)
+                    break
+                  }
+                  case ('quo'): {
+                    operationFormula = formula.slice(5).split(';').join('/')
+                    _value = eval(operationFormula)
+                    break
+                  }
+                  default: _value = eval(updatedFormula.substring(1))
+                }
+              } else _value = eval(formula.substring(1))
+              console.log("_value", _value)
+              return {formula: formula,
+                      value: _value}
+            } catch(e) {
                 return {formula: formula,
                   value: "error",
                   className: 'cell-error'}
-              }
+                }
             }   
     }
   
@@ -117,17 +203,18 @@ export default class MathTable extends Component {
       let id = "" + changedCell.id
       console.log("id", id)    
       let upDatedCell = Object.assign(
-        {}, changedCell, this.calculateValue(state, changedCell.id, formula))
+        {}, changedCell, this.calculateValue(state, formula))
       console.log("stateCopy", state, id[0] )
       console.log("upDatedCell", upDatedCell )
-      state[id[0]][id[1]] = upDatedCell
-      
+      if (state[id[0]] == undefined) 
+        state[id[0]]={};
+      state[id[0]][id[1]] = upDatedCell      
   
       for (var row in state){
-        console.log("row", row, state[row])      
+        // console.log("row", row, state[row])      
         for (var item in state[row]){          
           let currentItem = state[row][item]
-          console.log("item", item, state[row][item])
+          // console.log("item", item, state[row][item])
           if (currentItem.formula.charAt(0) === '=' &&
             currentItem.formula.indexOf(changedCell.id) > -1 &&
             currentItem.id !== changedCell.id )
@@ -157,45 +244,19 @@ export default class MathTable extends Component {
         table: newState
       }))
     }
-  
-    // componentDidMount(){
-    //     this.updateState({
-    //     id: "B3",
-    //     x: 3,
-    //     y: 'B',
-    //     formula: '=3+A1',
-    //     value: null
-    //     }, "=3+A1")
-    // }
 
-
-    // cellRange = ( colStart, colEnd, rowStart, rowEnd) => {
-    //   let array = []
-    //   for (let y = colStart.charCodeAt(0); y <= colEnd.charCodeAt(0); y++){
-    //     for ( let x = rowStart; x <= rowEnd; x++ ){
-    //       array.push(String.fromCharCode(y) + x )
-    //     }
-    //   }
-    //   return array
-    // }
-
-    cellRange = ( colStart, colEnd, rowStart, rowEnd) => {
+    cellTable = ( colStart, colEnd, rowStart, rowEnd) => {
       let arrayOfRows = []    
       for ( let x = rowStart; x <= rowEnd; x++ ){
           let arrayOfCells = []
           for (let y = colStart.charCodeAt(0); y <= colEnd.charCodeAt(0); y++){
-              let interCell = {}
-              if (x == 0 ){
-                  Object.assign(interCell, {id: String.fromCharCode(y) + x })
-                      
-              } else if (y == 64){
-                Object.assign(interCell, {id: String.fromCharCode(y) + x })
-              } else Object.assign(interCell, {id: String.fromCharCode(y) + x});   
+              let interCell = {}              
+                Object.assign(interCell, {x: x, y: String.fromCharCode(y) }) 
               arrayOfCells.push(interCell)
           }
           arrayOfRows.push(arrayOfCells)
       }
-      console.log(arrayOfRows)
+      // console.log(arrayOfRows)
       return arrayOfRows
     }
 
@@ -203,47 +264,55 @@ export default class MathTable extends Component {
     render(){
       console.log("render state", this.state)
 
-      let data = this.cellRange("@", "D", 0, 5) 
+      let data = this.cellTable("@", "D", 0, 5) 
       let list = data.map((item, i)=> {
               return (
                   <tr key={i} >
                       {item.map(cell => {                        
-                        let elem = cell.id
-                        if (elem[1] == 0)
+                        let {x, y} = cell
+                        let key = y+x
+                        let initialCell = {                          
+                            id: y+x,
+                            x: x,
+                            y: y,
+                            value: null,
+                            formula: null,
+                            className: 'cell-title'                          
+                        }          
+                        if (x == 0)
                           return (
-                              <Cell key={cell.id}                              
+                              <Cell key={key}                              
                               cellFromState={
                                {
-                                  id: elem,
-                                  x: +elem[1],
-                                  y: elem[0],
-                                  value: elem[0],
+                                  ...initialCell,
+                                  value: y == "@" ? "" : y,
                                   className: 'cell-title'
                                 } }                              
                               />
                           )
-                        else if (elem[0] == "@")
+                        else if (y == "@")
                         return(
-                          <Cell key={cell.id}                          
+                          <Cell key={key}                          
                           cellFromState={
                            {
-                              id: elem,
-                              x: +elem[1],
-                              y: elem[0],
-                              value:  elem[1] ,
+                              ...initialCell,
+                              value:  x ,
                               className: 'cell-title'                              
                             } }                              
                           />
                         )
                         else return (
-                          <Cell key={cell.id} 
+                          <Cell key={key} 
                           update={this.updateState}
+                          startSelecting = {this.startSelecting}
+                          continueSelecting = {this.continueSelecting}
+                          stopSelecting = {this.stopSelecting}
+                          isFirst = {this.state.selection.start === key}
+                          active = {this.state.selection.selectedCells.some(x => x == key)}
                           cellFromState={
-                            this.state.table[elem[0]] !== undefined && this.state.table[elem[0]][+elem[1]] !== undefined? 
-                            this.state.table[elem[0]][+elem[1]] : {
-                              id: elem,
-                              x: +elem[1],
-                              y: elem[0],
+                            this.state.table[y] !== undefined && this.state.table[y][x] !== undefined? 
+                            this.state.table[y][x] : {
+                              ...initialCell,
                               value: '' ,
                               formula: '',
                               className: 'cell'
@@ -256,43 +325,13 @@ export default class MathTable extends Component {
           }        
       )
       
-        
         return (
           <div className="wrapper" >
           < ControlsContainer update={this.updateState} />
               <table className='table' >
                   <tbody>{list}</tbody>
               </table>
-
           </div>
-
-            // <div className="table" >
-            //     { this.cellRange("A", "D", 0, 3).map(elem =>  {
-            //         console.log("current cell", elem[0], elem[1], typeof +elem[1])
-            //         if (this.state.table[elem[0]] !== undefined && this.state.table[elem[0]][+elem[1]] !== undefined)
-            //         console.log("in state defined", elem);
-            //         return (
-            //             <Cell 
-            //                 key={elem} id = {elem}                             
-            //                 update={this.updateState}
-            //                 cellFromState={
-            //                   this.state.table[elem[0]] !== undefined && this.state.table[elem[0]][+elem[1]] !== undefined? 
-            //                   this.state.table[elem[0]][+elem[1]] : {
-            //                     id: elem,
-            //                     x: +elem[1],
-            //                     y: elem[0],
-            //                     value: '',
-            //                     formula: ''
-            //                   } }
-            //                 formula={this.state.table[elem[0]] !==undefined && this.state.table[elem[0]][+elem[1]]!==undefined ? 
-            //                     this.state.table[elem[0]][+elem[1]].formula : ""}
-            //                 value={this.state.table[elem[0]]!==undefined && this.state.table[elem[0]][+elem[1]]!==undefined ? 
-            //                     this.state.table[elem[0]][+elem[1]].value : ""} /> 
-            //         )}
-            
-            //     )}
-            // </div>
-        )
-  
+        )  
     }
 }
