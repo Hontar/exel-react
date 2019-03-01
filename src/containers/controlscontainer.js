@@ -89,6 +89,7 @@ class ControlsContainer extends Component {
                 className='controls_input'
                 name='formula'
                 type='text'
+                disabled={this.props.cell.id ? false : true}
                 defaultValue={this.props.cell.formula}
                 ref={c => this.inputCell = c}
                 onChange={this.sendFormula} 

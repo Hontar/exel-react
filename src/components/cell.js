@@ -9,23 +9,38 @@ class Cell extends Component {
     constructor(props){
       super(props)
       this.state = {
-        id: this.props.cellFromState.id,
-        formula: this.props.cell.formula,
-        value: this.props.cellFromState.value,
+        // id: this.props.cellFromState.id,
+        // formula: this.props.cell.formula,
+        // value: this.props.cellFromState.value,
         showInput: false,
-        selected: this.props.cell.selected,
-        pressed: false
+        // selected: this.props.cell.selected,
+        // pressed: false
+      }
+      this.defaultCell = {
+        id: this.props.cellFromState.id,
+        formula: this.props.cell.formula
       }
     }  
 
-    sendFormula = () => this.props.onSend(this.state.id, this.currentCell.value, this.props.cellFromState)
-    changeCellFormula = () => {  
-      console.log("input", this.currentCell, this.currentCell.value) 
-      if (this.currentCell.value !== this.state.formula)
+    sendFormula = () => this.props.onSend(this.defaultCell.id, this.currentCell.value, this.props.cellFromState)
+    changeCellFormula = (e) => {  
+      console.log("input",  this.currentCell, this.currentCell.value) 
+      console.dir(e)
+      if (this.currentCell.value !== this.defaultCell.formula)
         this.props.update( this.props.cellFromState, this.currentCell.value);  
       this.setState(prevstate => 
         ({ ...prevstate, showInput: !prevstate.showInput})
       )      
+    }
+    changeCellFormulaKeyboard = (e) => { 
+      console.log(e.key)    
+      let arrowKey = /^Arrow/g  
+      if (e.key === 'Enter' || arrowKey.test(e.key)){
+        this.props.update( this.props.cellFromState, this.currentCell.value);  
+        this.setState(prevstate => 
+          ({ ...prevstate, showInput: !prevstate.showInput})
+        ) 
+      } else this.sendFormula()  
     }
     changeCellView = () => {  
       // console.log("input", this.currentCell, this.currentCell.value)       
@@ -35,14 +50,14 @@ class Cell extends Component {
     }
 
     setCurrent = () => {
-      this.props.onSend(this.state.id, this.props.cellFromState.formula, this.props.cellFromState)
+      this.props.onSend(this.defaultCell.id, this.props.cellFromState.formula, this.props.cellFromState)
     }
 
     startSelecting = () => {      
-      this.props.startSelecting(this.state.id)
+      this.props.startSelecting(this.defaultCell.id)
     }
     continueSelecting = () => {      
-      this.props.continueSelecting(this.state.id);     
+      this.props.continueSelecting(this.defaultCell.id);     
     }
     stopSelecting = () => {
       this.props.stopSelecting();     
@@ -89,8 +104,9 @@ class Cell extends Component {
                     autoFocus = {true}
                     defaultValue={this.props.cellFromState.formula}
                     ref={c => this.currentCell = c}
-                    onChange={this.sendFormula}
+                    // onChange={this.sendFormula}
                     onBlur={this.changeCellFormula}
+                    onKeyDown={this.changeCellFormulaKeyboard}
                 /> 
                 } 
                 <span
@@ -119,13 +135,13 @@ class Cell extends Component {
           console.log("onSend isn't set", id, formula)
         },
         startSelecting(id){
-          console.log("startSelecting isn't set", id)
+          return null
         },
         continueSelecting(id){
-          console.log("continueSelecting isn't set", id)
+          return null
         },
         stopSelecting(id){
-          console.log("stopSelecting isn't set", id)
+          return null
         }
       }
     }

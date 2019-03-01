@@ -34,6 +34,9 @@
             border: none;
             box-sizing: border-box;
         }
+        &.left {     
+            text-align: left;
+        }
     }
     & input{
         position: absolute;

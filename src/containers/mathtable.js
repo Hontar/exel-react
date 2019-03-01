@@ -136,61 +136,86 @@ export default class MathTable extends Component {
     
     calculateValue= (state, formula) => {
       let _value = null
-      let updatedFormula = ""
+      let stringCell = {
+        formula: formula,
+        value: formula,
+        className: 'cell left'
+      }
+      let date = Date.parse(new Date(formula).toISOString())
+      // let updatedFormula = formula
       console.log("formula", formula, typeof formula)
-          if(formula.charAt(0) !== '='){ 
+          if(formula.charAt(0) !== '=' && !isNaN(formula.charAt(0)) ){ 
             console.log("value=formula", formula, typeof formula)        
-            return {formula: formula,
-                    value: formula}            
+            return {...stringCell,
+                    className: 'cell'
+                  }            
+          }  else if(formula.charAt(0) !== "'"){ 
+            console.log("value=formula", formula, typeof formula)        
+            return {...stringCell,
+                    value: formula.substring(0)
+                    } 
+          } else if(formula.charAt(0) !== '"' || formula.charAt(0) !== "`"){ 
+            console.log("value=formula", formula, typeof formula)        
+            return {...stringCell} 
           } else {
             try {
+              formula = formula.toUpperCase()
+              let updatedFormula = formula
+              
               console.log("eval", formula, typeof formula)
               let divNull = formula.search(/\/(?=0)+/g)
               if (divNull > 0)
                 return {formula: formula,
-                  value: '#DIV/0!'};
-              let notProperSymbols = formula.search(/[^*/+=()\-0-9A-Z]+/g)
+                  value: '#DIV/0!',
+                  className: 'cell-error'};
+              let notProperSymbols = formula.search(/[^*/+=() \-0-9A-Z]+/g)
               if (notProperSymbols > 0)
                 return {formula: formula,
-                  value: '#NAME?'};
-              let matches = formula.match(/[A_Z][1-9]+/g) || []
+                  value: '#NAME?',
+                  className: 'cell-error'};
+              let matches = formula.match(/[A-Z][1-9]+/g) || []
               console.log("matches", matches)
-              if (matches){
+              if (matches.length){
                 matches.forEach(match => {
-                  let foundValue = state[match[0]][match[1]].value
+                  let foundValue = state[match[0]] && 
+                                  state[match[0]][match[1]] && 
+                                  state[match[0]][match[1]].value ? 
+                                  state[match[0]][match[1]].value : '0'
                   console.log("foundValue", foundValue)
-                  return updatedFormula = formula.replace(match, foundValue)
+                  updatedFormula = updatedFormula.replace(match, foundValue)
                 })
-                console.log("updatedFormula", updatedFormula)  
-                let operation = formula.substr(1,3)
-                let operationFormula = null
-                switch(operation){
-                  case ('sum'): {
-                    operationFormula = formula.slice(4).split(';').join('+')
-                    _value = eval(operationFormula)
-                    break
-                  }
-                  case ('dif'): {
-                    operationFormula = formula.slice(5).split(';').join('-')
-                    _value = eval(operationFormula)
-                    break
-                  }
-                  case ('pro'): {
-                    operationFormula = formula.slice(5).split(';').join('*')
-                    _value = eval(operationFormula)
-                    break
-                  }
-                  case ('quo'): {
-                    operationFormula = formula.slice(5).split(';').join('/')
-                    _value = eval(operationFormula)
-                    break
-                  }
-                  default: _value = eval(updatedFormula.substring(1))
-                }
+                console.log("updatedFormula", updatedFormula)
+                _value = eval(updatedFormula.substring(1)) 
+                // let operation = formula.substr(1,3)
+                // let operationFormula = null
+                // switch(operation){
+                //   case ('sum'): {
+                //     operationFormula = formula.slice(4).split(';').join('+')
+                //     _value = eval(operationFormula)
+                //     break
+                //   }
+                //   case ('dif'): {
+                //     operationFormula = formula.slice(5).split(';').join('-')
+                //     _value = eval(operationFormula)
+                //     break
+                //   }
+                //   case ('pro'): {
+                //     operationFormula = formula.slice(5).split(';').join('*')
+                //     _value = eval(operationFormula)
+                //     break
+                //   }
+                //   case ('quo'): {
+                //     operationFormula = formula.slice(5).split(';').join('/')
+                //     _value = eval(operationFormula)
+                //     break
+                //   }
+                //   default: _value = eval(updatedFormula.substring(1))
+                // }
               } else _value = eval(formula.substring(1))
               console.log("_value", _value)
               return {formula: formula,
-                      value: _value}
+                      value: _value,
+                      className: 'cell'}
             } catch(e) {
                 return {formula: formula,
                   value: "error",
