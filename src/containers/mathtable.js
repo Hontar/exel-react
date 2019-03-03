@@ -51,64 +51,84 @@ export default class MathTable extends Component {
           pressed: false,
           start: null,
           end: null
-        }        
+        },
+        selectionInFormula: {
+          selectedCells: [],
+          pressed: false,
+          start: null,
+          end: null
+        },
+        currentCell: {
+          id: null, 
+          isEdited: false
+        }               
       }
     }
 
-    startSelecting = (id) => {      
-        this.setState( prevState => ({ 
-                table: {...prevState.table}, 
-                selection: {
-                  selectedCells: [id],
-                  pressed: true,
-                  start: id,
-                  end: id 
-                }
-              })
-          );       
-    // (id) => {
-    //   let newSelection = id;
-    //   let newSelectionArray;
-   
-    //   if(this.state.selectedCells.indexOf(newSelection) > -1) {
-    //     newSelectionArray = this.state.selectedCells.filter(s => s !== newSelection)
-    //   } else {
-    //     newSelectionArray = [...this.state.selectedCells, newSelection];
-    //   }
-   
-    //     this.setState( prevState => ({ 
-    //       table: {...prevState.table}, 
-    //       selectedCells: newSelectionArray,
-    //       pressed: true 
-    //     })
-    //     )       
+    enableEditing = (id, flag) => {
+      let newSelectionObj = {
+        selectedCells: [],
+        pressed: false,
+        start: null,
+        end: null 
+      }  
+      this.setState( prevState => ({ 
+        ...prevState,       
+        selectionInFormula: newSelectionObj,
+        currentCell: {
+          id: id, 
+          isEdited: flag
+        }  
+      })
+    )}
+
+    startSelecting = (id) => {
+      console.log("this state start selecting", id)
+      let flag = this.state.currentCell.isEdited  
+      let newSelectionObj = {
+        selectedCells: [id],
+        pressed: true,
+        start: id,
+        end: id 
+      }   
+      if (id !== this.state.currentCell.id)
+      this.setState( prevState => ({ 
+              table: {...prevState.table}, 
+              selection: flag ? {...prevState.selection} : newSelectionObj,
+              selectionInFormula: flag ? newSelectionObj : {...prevState.selectionInFormula},
+              currentCell: {...prevState.currentCell}  
+            })
+        )       
     }
 
     continueSelecting = (id) => {
-      if (this.state.selection.pressed && this.state.selection.start !== id ){
-        let newSelectionArray = this.getSelectedCells(this.state, this.state.selection.start, id)
-        this.setState( prevState => ({ 
+      let kindOfSelection = this.state.currentCell.isEdited ? "selectionInFormula" : "selection"
+      
+
+      if (this.state[kindOfSelection].pressed && this.state[kindOfSelection].start !== id ){
+        console.log("start id", id, kindOfSelection, this.state[kindOfSelection].pressed, this.state.selection.start, this.state.selectionInFormula.start )
+        let newSelectionArray = this.getSelectedCells(this.state[kindOfSelection].start, id)
+        console.log("selected array", newSelectionArray)
+        this.setState( prevState => ({
+          ...prevState, 
           table: {...prevState.table}, 
-          selection: {
+          [kindOfSelection]: {
             selectedCells: newSelectionArray,
             pressed: true,
-            start: prevState.selection.start,
+            start: prevState[kindOfSelection].start,
             end: id 
           }
         }));  
       }        
     }
 
-    getSelectedCells = (data, start, end) => {
+    getSelectedCells = (start, end) => {
       var selected = [];
       let range = this.range
       range(start.charCodeAt(0), end.charCodeAt(0)).map((_col) => {
         range(+start[1], +end[1]).map((row) => {
-          let col = String.fromCharCode(_col)
-          // console.log("col, row", col, row, data[col][row])
-          // if (data[col] && data[col][row]) {
+          let col = String.fromCharCode(_col)        
             selected.push((col+row));
-          // }
         });
       });
       return selected;
@@ -126,9 +146,14 @@ export default class MathTable extends Component {
     stopSelecting = () => {
         
         this.setState( prevState => ({ 
+          ...prevState,
           table: {...prevState.table}, 
           selection: {
             ...prevState.selection,
+            pressed: false,            
+          },
+          selectionInFormula: {
+            ...prevState.selectionInFormula,
             pressed: false,            
           }
         }));  
@@ -141,23 +166,17 @@ export default class MathTable extends Component {
         value: formula,
         className: 'cell left'
       }
-      let date = Date.parse(new Date(formula).toISOString())
-      // let updatedFormula = formula
-      console.log("formula", formula, typeof formula)
-          if(formula.charAt(0) !== '=' && !isNaN(formula.charAt(0)) ){ 
-            console.log("value=formula", formula, typeof formula)        
+     
+      console.log("formula", formula, typeof formula, formula.charAt(0))
+          if(formula.charAt(0) === "'"){ 
+            console.log("value '", formula, typeof formula)        
             return {...stringCell,
-                    className: 'cell'
-                  }            
-          }  else if(formula.charAt(0) !== "'"){ 
-            console.log("value=formula", formula, typeof formula)        
-            return {...stringCell,
-                    value: formula.substring(0)
+                    value: formula.substring(1)
                     } 
-          } else if(formula.charAt(0) !== '"' || formula.charAt(0) !== "`"){ 
-            console.log("value=formula", formula, typeof formula)        
+          } else if(formula.charAt(0) === '"' || formula.charAt(0) === "`"){ 
+            console.log("value " , formula, typeof formula)        
             return {...stringCell} 
-          } else {
+          }  else if (formula.charAt(0) === "="){
             try {
               formula = formula.toUpperCase()
               let updatedFormula = formula
@@ -186,6 +205,9 @@ export default class MathTable extends Component {
                 })
                 console.log("updatedFormula", updatedFormula)
                 _value = eval(updatedFormula.substring(1)) 
+                return {formula: formula,
+                  value: _value,
+                  className: 'cell'}
                 // let operation = formula.substr(1,3)
                 // let operationFormula = null
                 // switch(operation){
@@ -221,7 +243,15 @@ export default class MathTable extends Component {
                   value: "error",
                   className: 'cell-error'}
                 }
-            }   
+            }  else if(formula.charAt(0) !== '=' && isNaN(formula.charAt(0))){ 
+              console.log("value=formula", formula, typeof formula)        
+              return {...stringCell}            
+            } else if(formula.charAt(0) !== '=' ){ 
+              console.log("value=formula", formula, typeof formula)        
+              return {...stringCell,
+                      className: 'cell'
+                    }            
+            }
     }
   
     cellUpdate = (state, changedCell, formula) => {
@@ -252,16 +282,7 @@ export default class MathTable extends Component {
     updateState = (_currentCell, _formula) => {
       console.log("first cell", _currentCell)
       let prevState = JSON.parse(JSON.stringify(this.state.table));
-      let formula = "" + _formula
-    //   for (var row in prevState){
-    //     console.log("row", row, prevState[row])      
-    //     for (var item in prevState[row]){          
-    //       let currentItem = prevState[row][item]
-    //       console.log("item", item, prevState[row][item])
-    //      this.cellUpdate(prevState, currentItem, currentItem.formula)
-    //     }
-    //   }
-      
+      let formula = "" + _formula      
       let newState = this.cellUpdate(prevState, _currentCell, formula);
       console.log("newState", newState)
       this.setState (prevstate => ({
@@ -288,8 +309,10 @@ export default class MathTable extends Component {
   
     render(){
       console.log("render state", this.state)
+      let selectedArray = this.state.selectionInFormula.selectedCells
+      let enableSelectedArray = this.state.currentCell.isEdited
 
-      let data = this.cellTable("@", "D", 0, 5) 
+      let data = this.cellTable("@", "F", 0, 9) 
       let list = data.map((item, i)=> {
               return (
                   <tr key={i} >
@@ -329,11 +352,15 @@ export default class MathTable extends Component {
                         else return (
                           <Cell key={key} 
                           update={this.updateState}
+                          enableEditing = {this.enableEditing}
+                          isSelected = {this.state.selection.selectedCells.pressed}
+                          isEdited = {this.state.currentCell.isEdited}
                           startSelecting = {this.startSelecting}
                           continueSelecting = {this.continueSelecting}
                           stopSelecting = {this.stopSelecting}
                           isFirst = {this.state.selection.start === key}
-                          active = {this.state.selection.selectedCells.some(x => x == key)}
+                          active = {!this.state.currentCell.isEdited && this.state.selection.selectedCells.some(x => x == key)}
+                          isSelected = {this.state.currentCell.isEdited && this.state.selectionInFormula.selectedCells.some(x => x == key)}
                           cellFromState={
                             this.state.table[y] !== undefined && this.state.table[y][x] !== undefined? 
                             this.state.table[y][x] : {
@@ -352,7 +379,7 @@ export default class MathTable extends Component {
       
         return (
           <div className="wrapper" >
-          < ControlsContainer update={this.updateState} />
+          < ControlsContainer update={this.updateState} enableSelectedArray = {enableSelectedArray} selectedArray = {selectedArray} />
               <table className='table' >
                   <tbody>{list}</tbody>
               </table>

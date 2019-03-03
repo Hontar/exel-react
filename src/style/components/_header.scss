@@ -1,0 +1,58 @@
+.header {
+	width: 100%;
+	background-color: grey;
+	display: flex;
+	justify-content: space-between;
+
+	&__logo-box {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-left: 3rem;
+	}
+
+	&__logo {
+		width: 5rem;
+	}
+
+	&__item {
+		display: flex;
+	}
+
+	&__name{
+        font-size: 1.4rem;
+    }
+	&__save{
+        font-size: 1rem;
+    }
+
+	&__button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: green;
+        width: 4rem;
+        height: 4rem;
+		// text-decoration: none;
+		// color: black;
+		// font-size: 1.4rem;
+        border-radius: 50%;
+		&:hover {
+			color: white;
+		}
+    }
+    &__link {
+        display: block;
+        margin: 0;
+        padding: 0;
+		line-height: 4rem; 
+		text-align: center;       
+		text-decoration: none;
+		color: black;
+		font-size: 3rem;
+        border-radius: 50%;
+		&:hover {
+			color: white;
+		}
+	}
+}

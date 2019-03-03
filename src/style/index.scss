@@ -1,4 +1,8 @@
-@import '_base';
+@import "./abstracts/variables";
+
+@import "./base/base";
 
 @import 'containers/controls';
-@import 'containers/mathtable'
+@import 'containers/mathtable';
+
+@import 'components/header'

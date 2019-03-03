@@ -54,9 +54,9 @@ class ControlsContainer extends Component {
         // this.inputCell.value=""
     };
 
-    selectFormula = (e) => {
-        this.inputCell.value = `=${e.target.value}()`
-    }
+    // selectFormula = (e) => {
+    //     this.inputCell.value = `=${e.target.value}()`
+    // }
 
     shouldComponentUpdate(nextProps, nextState, nextContext){
         if(nextProps.formula !== this.props.cell.formula)
@@ -66,13 +66,13 @@ class ControlsContainer extends Component {
 
 
     render(){
-        console.log("render input", this.props.cell.formula)
+        console.log("render input", this.props, this.props.cell.formula)
         return (
         <div className='controls'>
             <span name='id' className='controls_current-id' > 
                 {this.props.cell.id} 
             </span>
-            <InputComponent 
+            {/* <InputComponent 
                 inputType='select'
                 config={{
                     option: this.state.controls.funcSelect.config.option, 
@@ -81,7 +81,7 @@ class ControlsContainer extends Component {
                     onChange: this.selectFormula
                 }}
 
-            />
+            /> */}
             {/* <span className='controls_formula-select' > 
                 f
             </span> */}
@@ -90,7 +90,7 @@ class ControlsContainer extends Component {
                 name='formula'
                 type='text'
                 disabled={this.props.cell.id ? false : true}
-                defaultValue={this.props.cell.formula}
+                value={this.props.cell.formula}
                 ref={c => this.inputCell = c}
                 onChange={this.sendFormula} 
                 onBlur={this.updateState}
@@ -128,4 +128,4 @@ class ControlsContainer extends Component {
 }
 
 
-export default connect(state => ({cell: state.currentCellReducer}), {onSend: actionInputCell})(ControlsContainer)
+export default connect(state => ({cell: state.cell}), {onSend: actionInputCell})(ControlsContainer)
