@@ -315,8 +315,13 @@ export default class MathTable extends Component {
           // console.log("item", item, state[row][item])
           if (currentItem.formula.charAt(0) === '=' &&
             currentItem.formula.indexOf(changedCell.id) > -1 &&
-            currentItem.id !== changedCell.id )
-              state = this.cellUpdate( state, currentItem, currentItem.formula)
+            currentItem.id !== changedCell.id 
+            // || currentItem.formula.search(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)/g) >= 0
+          ){
+            state = this.cellUpdate( state, currentItem, currentItem.formula)
+          } else if (currentItem.id !== changedCell.id &&
+            currentItem.formula.search(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)/g) >= 0) 
+            state = this.cellUpdate( state, currentItem, currentItem.formula) 
         }
       }
       return state
@@ -431,7 +436,18 @@ export default class MathTable extends Component {
       
         return (
           <div className="wrapper" >
-          < ControlsContainer update={this.updateState} enableSelectedArray = {enableSelectedArray} selectedArray = {selectedArray} />
+          < ControlsContainer update={this.updateState}
+                          enableArray = {this.state.currentCell.isEdited} 
+          
+                          selectionRange = {{
+                            start: {
+                              x: this.state.selectionInFormula.startX,
+                              y: this.state.selectionInFormula.startY
+                            }, 
+                            end: {
+                              x: this.state.selectionInFormula.endX,
+                              y: this.state.selectionInFormula.endY
+                            }}} />
               <table className='table' >
                   <tbody>{list}</tbody>
               </table>

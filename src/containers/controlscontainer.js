@@ -8,7 +8,7 @@ import {actionInputCell} from "../store/acs";
 class ControlsContainer extends Component {
     constructor(props){
         super(props)
-        this.state = {
+        this.state = {             
             controls:{
                 funcSelect: {
                     inputType: 'select',
@@ -42,16 +42,16 @@ class ControlsContainer extends Component {
     //         }
         }
     }
+    this.inputCell = React.createRef()
 }
     sendFormula = () => this.props.onSend(this.props.cell.id, this.inputCell.value, this.props.cell.cell )
 
     updateState = () => {
-        console.log("blur", this.inputCell.value, this.props.cell.formula)
-        if (this.inputCell.value !== this.props.cell.cell.formula){
+        console.log("blur", this.inputCell.current.value, this.props.cell.formula)
+        if (this.inputCell.current.value !== this.props.cell.cell.formula){
             console.log("update")
-            this.props.update( this.props.cell.cell, this.inputCell.value)
+            this.props.update( this.props.cell.cell, this.inputCell.current.value)
         }
-        // this.inputCell.value=""
     };
 
     // selectFormula = (e) => {
@@ -63,6 +63,19 @@ class ControlsContainer extends Component {
             return true;
         return true
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        console.log("range in input satrt")
+        let {start, end} = prevProps.selectionRange
+        if (this.props.enableArray){
+          console.log("range in input mutation", this.inputCell.current.value)
+          let prevValue = this.inputCell.current.value.toUpperCase().match(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)/g) || "="        
+          if (this.inputCell.current && this.inputCell.current.value.charAt(0) === "=" && start.x){ 
+            console.log("range in input cruitios update", prevValue, this.inputCell.current.value )         
+            this.inputCell.current.value = `${prevValue} ${start.y + start.x} : ${end.y + end.x}`            
+          }
+        }      
+      }
 
 
     render(){
@@ -91,7 +104,7 @@ class ControlsContainer extends Component {
                 type='text'
                 disabled={this.props.cell.id ? false : true}
                 value={this.props.cell.formula}
-                ref={c => this.inputCell = c}
+                ref={this.inputCell}
                 onChange={this.sendFormula} 
                 onBlur={this.updateState}
             />

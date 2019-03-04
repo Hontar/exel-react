@@ -37,7 +37,8 @@ class Cell extends Component {
         console.log("focus")
         this.currentCell.current.focus()} 
     }
-    changeCellFormulaKeyboard = (e) => { 
+    changeCellFormulaKeyboard = (e) => {  
+      this.props.onSend(this.defaultCell.id, this.currentCell.current.value, this.props.cellFromState)     
       console.log(e.key, this.currentCell.current.value.charAt(0))  
       if(this.currentCell.current.value.charAt(0) === "="){
         console.log("enableEditing" )
@@ -102,6 +103,7 @@ class Cell extends Component {
         if (this.currentCell.current && this.currentCell.current.value.charAt(0) === "=" && start.x){ 
           console.log("range in input cruitios update", prevValue, this.currentCell.current.value )         
           this.currentCell.current.value = `${prevValue} ${start.y + start.x} : ${end.y + end.x}`
+          // this.props.onSend(this.defaultCell.id, this.currentCell.current.value, this.props.cellFromState)
         }
       }      
     }
