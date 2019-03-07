@@ -1,4 +1,4 @@
-import {createStore, combineReducers, applyMiddleware} from "redux";
+import {createStore, applyMiddleware} from "redux";
 
 import thunk from "redux-thunk";
 
@@ -7,5 +7,5 @@ import initialState from "./initialState";
   
   export default createStore(
     reducers,
-    // initialState,
+    initialState,
     applyMiddleware(thunk))

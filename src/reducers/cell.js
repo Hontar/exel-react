@@ -8,7 +8,6 @@ export default (state, action) => {
         id: null,
         formula: '',
         cell: {},
-        // selected: false
       }
     }
     if (action.type === 'CELL_CURRENT'){
@@ -16,7 +15,6 @@ export default (state, action) => {
         id: action.id,
         formula: action.formula,
         cell: action.cell,
-        // selected: 'selected'
       }
     }
     if (action.type === 'CELL_SELECTED'){
@@ -24,7 +22,6 @@ export default (state, action) => {
         id: action.id,
         formula: action.formula,
         cell: action.cell,
-        // selected: 'selected'
       }
     }
     if (state === 'CELL_CLEAR'){
@@ -32,7 +29,6 @@ export default (state, action) => {
         id: null,
         formula: '',
         cell: {},
-        // selected: false
       }
     }
     return state;

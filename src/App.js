@@ -1,28 +1,42 @@
-// import React, { Component } from 'react';
-// import './style/index.scss';
+import React, { Component } from 'react';
+import './style/index.scss';
 
 // import update from 'immutability-helper';
 
 
 // import thunk from 'redux-thunk';
-// import { Provider, connect } from 'react-redux';
 
-// import {store} from './store/store.js'
-
-// import MathTable from './containers/mathtable'
-// import Header from './components/header'
+import { Switch, Route, withRouter, Redirect } from "react-router-dom";
 
 
 
-// store.subscribe(() => console.log("store", store.getState()))
 
-// let App = () =>
-// <Provider store = {store}>  
-//   <div className="App"> 
-//     <Header />     
-//     <MathTable />
-//   </div>
-// </Provider>
+import MathTable from './containers/mathtable'
+import Header from './components/header'
 
 
-// export default App;
+
+
+class App extends Component {
+
+
+
+    render(){
+        const { match } = this.props;
+
+        if (!match.params.id) {
+            return <Redirect to="/" />;
+        }
+        return (
+            <div className="App"> 
+                <Header />     
+                <MathTable />
+            </div>
+        )
+    }
+    
+    
+}
+  
+
+export default App;

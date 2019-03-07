@@ -1,30 +1,16 @@
 import React, { Component } from "react";
-import { Switch, Route, withRouter } from "react-router-dom";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import { Switch, Route } from "react-router-dom";
 
-import Header from "./components/header"
-import PrivateRoute from "./privateRouter"
-import MathTable from './containers/mathtable'
+import AppContainer from './containers/AppContainer'
 
 class Router extends Component {
-	componentDidMount() {
-		const token = localStorage.getItem("recentFile");
-
-		// if (token) {
-		// 	const { setToken } = this.props;
-		// 	return setToken(token);
-		// }
-	}
 
 	render() {
 		return (
-			<div className="container">
-				<Header />
+			<div id="container">
 				<Switch>
-					<PrivateRoute exact path="/:id" component={MathTable} />					
-					<Route exact path="/" component={MathTable} />
-
+					<Route exact path="/:id" component={AppContainer} />				
+					<Route exact path="/" component={AppContainer} />
 					<Route render={() => <div>404 NOT FOUND</div>} />
 				</Switch>
 			</div>
@@ -32,11 +18,4 @@ class Router extends Component {
 	}
 }
 
-// const mapDispatchToProps = dispatch => bindActionCreators({ setToken }, dispatch);
 export default Router
-// export default withRouter(
-// 	connect(
-// 		null,
-// 		mapDispatchToProps
-// 	)(Router)
-// );

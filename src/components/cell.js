@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 
-import {actionInputCell} from "../store/acs";
+import {actionInputCell} from "../actions/acs";
 
 class Cell extends Component {
     constructor(props){
@@ -129,7 +129,7 @@ class Cell extends Component {
             onMouseUp = {this.stopSelecting}
             onDoubleClick = {this.changeCellView}
             >   
-            {this.state.showInput && 
+            {showInput && 
             <input 
                     className='table-cell input'
                     style = {{display: showInput ? "inline-block" : "none"}}

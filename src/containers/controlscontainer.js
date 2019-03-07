@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import InputComponent from "../components/controls";
+// import InputComponent from "../components/controls";
 
 import { connect } from 'react-redux';
 
-import {actionInputCell} from "../store/acs";
+import {actionInputCell} from "../actions/acs";
+
 
 class ControlsContainer extends Component {
     constructor(props){
@@ -76,6 +77,9 @@ class ControlsContainer extends Component {
           }
         }      
       }
+
+
+     
 
 
     render(){
