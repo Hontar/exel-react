@@ -20,8 +20,7 @@
 
 	&__name-box {
 		display: flex;
-		align-content: baseline;
-				
+		align-content: baseline;				
 	}
 
 	&__name{
@@ -31,52 +30,25 @@
 		margin-left: 2rem;
 		display: inline-block;
 		width: 7rem;				
-    }
+	}
+	
 	&__save{
 		font-size: 1rem;
 		color: $color-white;
-		margin-left: 2rem;
+		margin-left: 1rem;
 		line-height: 1.4rem;
 	}
+	
 	& input{ 
 		background-color: $color-white;      
         outline: none!important;
 		border: none;
 		margin-left: 2rem;
+		padding: 0 0.5rem;
         // box-shadow: 0 0 10px rgba(0,0,0,0.5);
         text-align: right;
 		width: 7rem;		
 		height: 1.4rem;
         box-sizing: border-box;
-    }
-
-	// &__button {
-    //     display: flex;
-    //     justify-content: center;
-    //     align-items: center;
-    //     background-color: green;
-    //     width: 4rem;
-    //     height: 4rem;
-	// 	// text-decoration: none;
-	// 	// color: black;
-	// 	// font-size: 1.4rem;
-    //     border-radius: 50%;
-	// 	&:hover {
-	// 		color: white;
-	// 	}
-    // }
-    &__link {
-        display: block;
-        margin: 0;
-        padding: 0.5rem;
-		// line-height: 2rem; 
-		text-align: center;       
-		text-decoration: none;
-		color: $color-white;
-		font-size: 2rem;
-        // border-radius: 50%;
-		&:hover {
-			color: white;
-		}
-	}
+    }	   
 }

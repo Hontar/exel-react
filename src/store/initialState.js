@@ -1,7 +1,7 @@
 export default {    
         cell: {
-            id: null,
-            formula: '',
+            id: "",
+            formula: "",
             cell: {}
         },
         table: {

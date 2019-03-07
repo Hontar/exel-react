@@ -33,7 +33,8 @@ class MathTable extends Component {
         currentCell: {
           id: null, 
           isEdited: false
-        }               
+        },
+        counter: 0               
       }    
       
       // this.defaultState = {
@@ -65,8 +66,7 @@ class MathTable extends Component {
     componentDidUpdate = (prevProps, prevState) => {      
       let {table} = this.props
       if ( table && table !== prevProps.table ){
-      console.log("table", table)
-      
+      console.log("table", table)      
         this.setState( prevState => ({ 
           ...prevState,       
           table: table          
@@ -341,7 +341,8 @@ class MathTable extends Component {
       console.log("newState", newState)
       this.setState (prevstate => ({
         ...prevstate,
-        table: newState
+        table: newState,
+        counter: prevstate.counter + 1
       }))
     }
 
@@ -396,7 +397,8 @@ class MathTable extends Component {
                                   ...initialCell,
                                   value: y == "@" ? "" : y,
                                   className: 'cell-title'
-                                } }                              
+                                } } 
+                              isEdited = {currentCell.isEdited}                             
                               />
                           )
                         else if (y == "@")
@@ -407,7 +409,8 @@ class MathTable extends Component {
                               ...initialCell,
                               value:  x ,
                               className: 'cell-title'                              
-                            } }                              
+                            } } 
+                          isEdited = {currentCell.isEdited}                              
                           />
                         )
                         else return (

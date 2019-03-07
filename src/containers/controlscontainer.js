@@ -78,10 +78,6 @@ class ControlsContainer extends Component {
         }      
       }
 
-
-     
-
-
     render(){
         console.log("render input", this.props, this.props.cell.formula)
         return (

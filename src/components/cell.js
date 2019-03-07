@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 
-import {actionInputCell} from "../actions/acs";
+import {actionInputCell, actionCellClear} from "../actions/acs";
 
 class Cell extends Component {
     constructor(props){
@@ -21,6 +21,7 @@ class Cell extends Component {
     }  
 
     sendFormula = () => this.props.onSend(this.defaultCell.id, this.currentCell.current.value, this.props.cellFromState)
+    
     changeCellFormula = (e) => {  
       e.preventDefault()
       console.log("input",  this.currentCell, this.currentCell.current.value,this.props.isEdited ) 
@@ -37,6 +38,7 @@ class Cell extends Component {
         console.log("focus")
         this.currentCell.current.focus()} 
     }
+
     changeCellFormulaKeyboard = (e) => {  
       this.props.onSend(this.defaultCell.id, this.currentCell.current.value, this.props.cellFromState)     
       console.log(e.key, this.currentCell.current.value.charAt(0))  
@@ -56,6 +58,7 @@ class Cell extends Component {
         console.log("focus")
         this.props.onSend(this.defaultCell.id, this.currentCell.current.value, this.props.cellFromState)} 
     }
+
     changeCellView = () => {  
       this.setState(prevstate => 
         ({ ...prevstate, showInput: !prevstate.showInput})
@@ -63,6 +66,11 @@ class Cell extends Component {
     }
 
     setCurrent = () => {
+      if (this.props.cellFromState.className === "cell-title" && !this.props.isEdited){
+        console.log('cell-title')
+        this.props.actionCellClear()
+        return
+      } 
       console.log('click')
       if (!this.props.isEdited)
         this.props.onSend(this.defaultCell.id, this.props.cellFromState.formula, this.props.cellFromState)
@@ -95,15 +103,18 @@ class Cell extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-      console.log("range in input satrt")
-      let {start, end} = prevProps.selectionRange
-      if (this.state.showInput){
-        console.log("range in input mutation", this.currentCell.current.value)
-        let prevValue = this.currentCell.current.value.toUpperCase().match(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)/g) || "="        
-        if (this.currentCell.current && this.currentCell.current.value.charAt(0) === "=" && start.x){ 
-          console.log("range in input cruitios update", prevValue, this.currentCell.current.value )         
-          this.currentCell.current.value = `${prevValue} ${start.y + start.x} : ${end.y + end.x}`
-          // this.props.onSend(this.defaultCell.id, this.currentCell.current.value, this.props.cellFromState)
+      let {selectionRange} = this.props
+      if ( selectionRange && selectionRange !== prevProps.selectionRange ){
+        console.log("range in input satrt")
+        let {start, end} = prevProps.selectionRange
+        if (this.state.showInput){
+          console.log("range in input mutation", this.currentCell.current.value)
+          let prevValue = this.currentCell.current.value.toUpperCase().match(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)/g) || "="        
+          if (this.currentCell.current && this.currentCell.current.value.charAt(0) === "=" && start.x){ 
+            console.log("range in input cruitios update", prevValue, this.currentCell.current.value )         
+            this.currentCell.current.value = `${prevValue} ${start.y + start.x} : ${end.y + end.x}`
+            // this.props.onSend(this.defaultCell.id, this.currentCell.current.value, this.props.cellFromState)
+          }
         }
       }      
     }
@@ -163,6 +174,7 @@ class Cell extends Component {
           id: '',
           className: 'cell'
         },
+        
         onSend(id, formula){
           console.log("onSend isn't set", id, formula)
         },
@@ -179,5 +191,5 @@ class Cell extends Component {
     }
   }
   
-export default connect(state => ({cell: state.cell}), {onSend: actionInputCell})(Cell)
+export default connect(state => ({cell: state.cell}), {onSend: actionInputCell, actionCellClear: actionCellClear})(Cell)
   

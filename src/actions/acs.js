@@ -1,5 +1,12 @@
-export function actionInputCell (id, formula, cell) {
-    return {type: "CELL_CURRENT",
-    id,
-    formula, cell }
-  }
+import * as types from "../constants/actionTypes";
+
+export const actionInputCell = (id, formula, cell) => ({
+  type: types.CELL_CURRENT,
+  id,
+  formula, cell 
+});
+
+export const actionCellClear = (payload) => ({
+  type: types.CELL_CLEAR,
+  payload 
+})

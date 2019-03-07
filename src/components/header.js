@@ -92,21 +92,7 @@ class Header extends Component{
                             <span className="header__save">
                                 Save
                             </span>
-                    </div>                   
-                
-
-                <div 
-                    className="header__button"                    
-                    title="Create new file">
-                    {/* <div className="header__link" onClick={this.createNewTable} >
-                    +
-                    </div> */}
-                    {/* <Link  to="/" onClick={this.createNewTable} > */}
-                        {/* <Button type="primary" shape="circle"> */}
-                        {/* <Icon type="plus-circle" className="header__link"/> */}
-                        {/* </ Button> */}
-                    {/* </Link> */}
-                </div>
+                    </div> 
             </header>
         )
     }

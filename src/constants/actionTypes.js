@@ -8,7 +8,12 @@ export const SAVE_SHEET_FAIL = "SAVE_SHEET_FAIL";
 
 export const CLEAR_SHEET = "CLEAR_SHEET";
 
-export const SET_TOKEN = "SET_TOKEN";
+
+export const CELL_CURRENT = "CELL_CURRENT";
+export const CELL_SELECTED = "CELL_SELECTED";
+export const CELL_CLEAR = "CELL_CLEAR";
+
+// export const SET_TOKEN = "SET_TOKEN";
 
 
 
