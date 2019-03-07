@@ -51,12 +51,12 @@ export const clearsheet = () => ({
 });
 
 
-export function getSheet ({ key = 1}) {
+export function getSheet ( id ) {
     return async function (dispatch){
         dispatch (getSheetRequest())
         try {
             
-            let {data} = await axios(`http://localhost:3000/states?key=${key}`
+            let {data} = await axios(`http://localhost:3000/states?id=${id}`
             )                
             console.log("toDoList", data[0])
             // localStorage.setItem("toDoList", data)
@@ -95,7 +95,7 @@ export function updateItem (payload, id) {
     return async function (dispatch){
         dispatch (putSheetRequest())
         try {     
-            console.log("payload", payload)
+            console.log("payload", payload, id)
             let {data} = await axios(`http://localhost:3000/states/${id}`,
                 {
                     method: "PATCH",

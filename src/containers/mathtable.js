@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import * as actions from "../actions/table";
+import { withRouter } from 'react-router-dom'
 
 import ControlsContainer from './Controlscontainer';
 
@@ -64,15 +65,32 @@ class MathTable extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState) => {      
-      let {table} = this.props
+      let {table, id, saveItem, updateItem } = this.props
+      console.log("item", typeof item)
       if ( table && table !== prevProps.table ){
       console.log("table", table)      
         this.setState( prevState => ({ 
           ...prevState,       
-          table: table          
+          table: table,
+          counter: 2          
         }))
+      } 
+      console.log("mathtable didupdate counter", prevState.counter, this.state.counter, prevState, this.state)
+      if (prevState.counter == 0 && this.state.counter == 1 && prevState.table !== this.state.table){
+        console.log("table changed")
+        saveItem({
+          title: "Untitled",        
+          // item: (+new Date).toString(16).substr(4),
+          table: {...this.state.table}          
+        })
+        this.props.history.push(`/${id}`)
+      } else if(this.state.counter > 0 && this.state.counter < 10 && prevState.table !== this.state.table){
+        console.log("pass update", this.state.table)
+      } else if( this.state.counter === 10 && prevState.counter !== this.state.counter){
+        console.log("can update", id, this.state.table)
+        updateItem({table: this.state.table}, id)
       }
-    }
+    } 
 
     enableEditing = (id, flag) => {
       let newSelectionObj = {
@@ -334,16 +352,20 @@ class MathTable extends Component {
     }
   
     updateState = (_currentCell, _formula) => {
-      console.log("first cell", _currentCell)
+      console.log("first cell", _currentCell, _formula)
+      if (!_formula) return;
       let prevState = JSON.parse(JSON.stringify(this.state.table));
       let formula = "" + _formula      
       let newState = this.cellUpdate(prevState, _currentCell, formula);
-      console.log("newState", newState)
-      this.setState (prevstate => ({
-        ...prevstate,
-        table: newState,
-        counter: prevstate.counter + 1
-      }))
+      console.log("newState", newState, prevState, this.state.table)
+      if ( newState !== this.state.table){
+         console.log("newState +counter", newState)
+        this.setState (prevstate => ({
+          ...prevstate,
+          table: newState,
+          counter: prevstate.counter === 10 ? 1 : prevstate.counter + 1
+        }))
+      }     
     }
 
     cellTable = ( colStart, colEnd, rowStart, rowEnd) => {
@@ -471,4 +493,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({ ...actions }, dispat
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(MathTable);
+)(withRouter(MathTable));

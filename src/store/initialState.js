@@ -2,12 +2,15 @@ export default {
         cell: {
             id: "",
             formula: "",
-            cell: {}
+            cell: {},
+            error: null
         },
         table: {
             id: null,
-            key: null,
+            item: null,
             title: null,
-            table: null
+            table: null,
+            error: null,
+            isFetching: false
         }        
 }

@@ -8,8 +8,8 @@ export default (state = initialState.table, { type, payload }) => {
 			return { ...state, isFetching: true };
 		}
 		case types.GET_SHEET_SUCCESS: {
-			const { id, key, title, table } = payload;
-			return { ...state, id, key, title, table, isFetching: false };
+			const { id, item, title, table } = payload;			
+			return { ...state, id, item, title, table, isFetching: false };
 		}
 		case types.GET_SHEET_FAIL: {
 			return { ...state, isFetching: false };
@@ -18,8 +18,8 @@ export default (state = initialState.table, { type, payload }) => {
 			return { ...state, isFetching: true };
 		}
 		case types.SAVE_SHEET_SUCCESS: {
-			const { id, key, title, table } = payload;
-			return { ...state, id, key, title, table, isFetching: false };
+			const { id, item, title, table } = payload;
+			return { ...state, id, item, title, table, isFetching: false };
 		}
 		case types.SAVE_SHEET_FAIL: {
 			return { ...state, isFetching: false };

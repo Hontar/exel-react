@@ -56,7 +56,8 @@ class Cell extends Component {
         ) 
       } else {
         console.log("focus")
-        this.props.onSend(this.defaultCell.id, this.currentCell.current.value, this.props.cellFromState)} 
+        this.props.onSend(this.defaultCell.id, this.currentCell.current.value, this.props.cellFromState)
+      } 
     }
 
     changeCellView = () => {  

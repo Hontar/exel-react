@@ -47,6 +47,18 @@ class ControlsContainer extends Component {
 }
     sendFormula = () => this.props.onSend(this.props.cell.id, this.inputCell.value, this.props.cell.cell )
 
+    changeCellFormulaKeyboard = (e) => {
+        if (e.key === 'Enter' ){
+            if (this.inputCell.current.value !== this.props.cell.cell.formula){
+                console.log("update")
+                this.props.update( this.props.cell.cell, this.inputCell.current.value)
+            }
+          } else {
+            console.log("focus")
+            this.sendFormula()
+        }
+    }
+
     updateState = () => {
         console.log("blur", this.inputCell.current.value, this.props.cell.formula)
         if (this.inputCell.current.value !== this.props.cell.cell.formula){
@@ -65,8 +77,7 @@ class ControlsContainer extends Component {
         return true
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        console.log("range in input satrt")
+    componentDidUpdate(prevProps, prevState) {        
         let {start, end} = prevProps.selectionRange
         if (this.props.enableArray){
           console.log("range in input mutation", this.inputCell.current.value)
@@ -105,7 +116,8 @@ class ControlsContainer extends Component {
                 disabled={this.props.cell.id ? false : true}
                 value={this.props.cell.formula}
                 ref={this.inputCell}
-                onChange={this.sendFormula} 
+                // onChange={this.sendFormula} 
+                onKeyUp={this.changeCellFormulaKeyboard}
                 onBlur={this.updateState}
             />
         </div>

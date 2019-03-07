@@ -17,7 +17,7 @@ class Header extends Component{
         this.defaultState = {      
             showInput: false,
             touch: false,
-            title: "",
+            headerTitle: "",
             toClearTable: false
         } 
         this.inputRef = React.createRef();
@@ -26,7 +26,7 @@ class Header extends Component{
     changeTitle = (e) => {
         console.log("title change",this.inputRef.current.value)
         this.setState(prevstate => 
-            ({ ...prevstate, title: this.inputRef.current.value})
+            ({ ...prevstate, headerTitle: this.inputRef.current.value})
         )               
     }
 
@@ -40,7 +40,7 @@ class Header extends Component{
         console.dir("save title")
         const { updateItem, id } = this.props;
         if (id){
-            updateItem({title: this.state.title}, id)
+            updateItem({title: this.state.headerTitle}, id)
         }            
         this.changeCellView()
     }
@@ -56,7 +56,7 @@ class Header extends Component{
     
     render(){
         const {title} = this.props
-        let {showInput} = this.state
+        let {showInput, headerTitle} = this.state
 
         console.log("render header", title)
         // if (this.state.toClearTable){
@@ -87,7 +87,7 @@ class Header extends Component{
                             } 
                             <span className="header__name"
                                 style = {{display: !showInput ? "inline-block" : "none"}}>
-                                    {title ? title : "Untitled"}
+                                    {title ? title : (headerTitle ? headerTitle : "Untitled")}
                             </span>
                             <span className="header__save">
                                 Save
