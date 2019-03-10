@@ -110,10 +110,14 @@ class Cell extends Component {
         let {start, end} = prevProps.selectionRange
         if (this.state.showInput){
           console.log("range in input mutation", this.currentCell.current.value)
+          let enableRange = this.currentCell.current.value.toUpperCase().search(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)\s*\(\s*/g) >= 0         
           let prevValue = this.currentCell.current.value.toUpperCase().match(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)/g) || "="        
-          if (this.currentCell.current && this.currentCell.current.value.charAt(0) === "=" && start.x){ 
-            console.log("range in input cruitios update", prevValue, this.currentCell.current.value )         
-            this.currentCell.current.value = `${prevValue} ${start.y + start.x} : ${end.y + end.x}`
+          if (this.currentCell.current && enableRange && start.x){ 
+            console.log("enableRange", enableRange)
+            console.log("range in input cruitios update", prevValue, this.currentCell.current.value )
+            if (start.x === end.x && start.y === end.y) {
+              this.currentCell.current.value = `${prevValue} (${start.y + start.x} : `
+            } else this.currentCell.current.value = `${prevValue} (${start.y + start.x} : ${end.y + end.x})`              
             // this.props.onSend(this.defaultCell.id, this.currentCell.current.value, this.props.cellFromState)
           }
         }

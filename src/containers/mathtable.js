@@ -66,9 +66,8 @@ class MathTable extends Component {
 
     componentDidUpdate = (prevProps, prevState) => {      
       let {table, id, saveItem, updateItem } = this.props
-      console.log("item", typeof item)
       if ( table && table !== prevProps.table ){
-      console.log("table", table)      
+        console.log("table", table)      
         this.setState( prevState => ({ 
           ...prevState,       
           table: table,
@@ -227,7 +226,7 @@ class MathTable extends Component {
                   value: '#NAME?',
                   className: 'cell-error'};
 
-              let rangeMatch = formula.search(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)\s*[A-Z][0-9]+\s*:\s*[A-Z][0-9]+/g) >= 0
+              let rangeMatch = formula.search(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)\s*\(\s*[A-Z][0-9]+\s*:\s*[A-Z][0-9]+\s*\)/g) >= 0
               console.log("rangeMatch", rangeMatch)
                 if (rangeMatch){
                   let start = formula.match(/[A-Z][0-9]/g)[0]                  
@@ -313,7 +312,7 @@ class MathTable extends Component {
                   value: "error",
                   className: 'cell-error'}
                 }
-            }  else if(formula.charAt(0) !== '=' && isNaN(formula.charAt(0))){ 
+            }  else if(formula.charAt(0) !== '=' && formula.search(/\D/g) >=0){ 
               console.log("value=formula", formula, typeof formula)        
               return {...stringCell}            
             } else if(formula.charAt(0) !== '=' ){ 
@@ -385,7 +384,15 @@ class MathTable extends Component {
   
     render(){
       console.log("render state", this.state)
-      let { selection, currentCell, selectionInFormula } = this.state
+      let { selection, currentCell, selectionInFormula, counter } = this.state
+      let savingStatus = ""
+      if (counter === 0) {
+        savingStatus = "Unsaved"         
+      } else if (counter > 0 && counter < 10){
+        savingStatus = "Changed"
+      } else if (counter === 10){
+        savingStatus = "Saved"
+      }
       let _selectionRange = {
         start: {
           x: selectionInFormula.startX,
@@ -417,7 +424,7 @@ class MathTable extends Component {
                               cellFromState={
                                {
                                   ...initialCell,
-                                  value: y == "@" ? "" : y,
+                                  value: y == "@" ? savingStatus : y,
                                   className: 'cell-title'
                                 } } 
                               isEdited = {currentCell.isEdited}                             

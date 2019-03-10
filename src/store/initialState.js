@@ -9,7 +9,7 @@ export default {
             id: null,
             item: null,
             title: null,
-            table: null,
+            table: {},
             error: null,
             isFetching: false
         }        

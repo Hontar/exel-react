@@ -21,7 +21,7 @@
 
 	&__name-box {
 		display: flex;
-		align-content: baseline;				
+		align-items: center;				
 	}
 
 	&__name{
@@ -30,24 +30,28 @@
 		line-height: 1.4rem;
 		margin-left: 2rem;
 		display: inline-block;
-		width: 7rem;				
+		// width: 7rem;	
+		& input {
+			width: 7rem;	
+		}			
 	}
 	
-	&__save{
+	&__delete-box{
 		font-size: 1rem;
-		color: $color-white;
-		margin-left: 1rem;
+		color: $color-white;		
 		line-height: 1.4rem;
+		position: absolute;
+		right: 13rem;
+		cursor: pointer;
 	}
 
 	&__delete-box{
-		position: absolute;
-		right: 5%;
-		color: $color-white;
-		cursor: pointer;
-		font-size: 1rem;
-		// margin-left: 1rem;
-		line-height: 1.4rem;
+		right: 5rem;		
+	}
+
+	&__icon{
+		font-size: 1.4rem;
+		margin-right: 0.5rem;
 	}
 	
 	& input{ 

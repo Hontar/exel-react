@@ -94,7 +94,7 @@ class ControlsContainer extends Component {
         return (
         <div className='controls'>
             <span name='id' className='controls_current-id' > 
-                {this.props.cell.id} 
+                {this.props.cell.id ? this.props.cell.id : "ID" } 
             </span>
             {/* <InputComponent 
                 inputType='select'

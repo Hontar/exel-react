@@ -106,7 +106,7 @@ export function updateItem (payload, id) {
     }
 }
 
-export const clearsheet = () => ({
+export const clearSheet = () => ({
     type: types.CLEAR_SHEET
 });
 
@@ -130,7 +130,7 @@ export const clearFailRequest = (payload) => ({
     payload
 });
 
-export function deleteItem ({id = 1}) {
+export function deleteItem (id) {
     return async function (dispatch){
         dispatch (deleteSheetRequest())
         try {            

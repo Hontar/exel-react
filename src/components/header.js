@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import { withRouter } from 'react-router-dom'
+
 import * as actions from "../actions/table";
 
 import { Icon } from 'antd';
@@ -43,15 +45,18 @@ class Header extends Component{
     }
 
     createNewTable = () => {
-        const {clearSheet} = this.props
-        console.log("+ click")       
+        console.log("+ click") 
+        const {history, clearSheet} = this.props
+        history.push("/")
         clearSheet()        
     }
 
     deleteTable = () => {
-        const {id, deleteItem} = this.props
+        const {id, deleteItem, history, clearSheet} = this.props
         console.log("DELETE", id)
-        // deleteItem(id)
+        deleteItem(id)        
+        history.push("/")
+        clearSheet()
     }
 
     componentDidUpdate = (prevProps, prevState) => {        
@@ -93,13 +98,19 @@ class Header extends Component{
                             style = {{display: !showInput ? "inline-block" : "none"}}>
                                 {title ? title : (headerTitle ? headerTitle : "Untitled")}
                         </span>
-                        <span className="header__save">
-                            Save
-                        </span>
+                        {/* <div className="header__save-box" title="Save file" >                            
+                            <Icon type="save" className="header__icon" />                           
+                        </div> */}
                 </div>
                 <div className="header__delete-box" title="Delete file" >
                     {showDelete &&
-                        <Icon type="delete" onClick={this.deleteTable} />}
+                    <>                        
+                        <Icon type="delete" onClick={this.deleteTable} className="header__icon" />
+                        {/* <span>
+                            Delete
+                        </span> */}
+                    </>
+                    }
                 </div> 
             </header>
         )
@@ -117,4 +128,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({ ...actions }, dispat
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(Header);
+)(withRouter(Header));
