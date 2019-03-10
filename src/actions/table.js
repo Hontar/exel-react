@@ -16,41 +16,6 @@ const getSheetRequestRequestFail = (payload) => ({
     payload
 });
 
-const postSheetRequest = (payload) => ({
-    type: types.SAVE_SHEET,
-    payload
-})
-
-const postSheetRequestSuccess = (payload) => ({
-    type: types.SAVE_SHEET_SUCCESS,
-    payload
-});
-
-const postSheetRequestRequestFail = (payload) => ({
-    type: types.SAVE_SHEET_FAIL,
-    payload
-});
-
-const putSheetRequest = (payload) => ({
-    type: types.SAVE_SHEET,
-    payload
-})
-
-const putSheetRequestSuccess = (payload) => ({
-    type: types.SAVE_SHEET_SUCCESS,
-    payload
-});
-
-const putSheetRequestRequestFail = (payload) => ({
-    type: types.SAVE_SHEET_FAIL,
-    payload
-});
-
-export const clearsheet = () => ({
-    type: types.CLEAR_SHEET
-});
-
-
 export function getSheet ( id ) {
     return async function (dispatch){
         dispatch (getSheetRequest())
@@ -68,28 +33,56 @@ export function getSheet ( id ) {
     }
 }
 
+const postSheetRequest = (payload) => ({
+    type: types.SAVE_SHEET,
+    payload
+})
+
+const postSheetRequestSuccess = (payload) => ({
+    type: types.SAVE_SHEET_SUCCESS,
+    payload
+});
+
+const postSheetRequestFail = (payload) => ({
+    type: types.SAVE_SHEET_FAIL,
+    payload
+});
+
 export function saveItem (payload) {
     return async function (dispatch){
         dispatch (postSheetRequest())
-        try {     
-            // console.log("toDoList", data)
-            
-                let {data} = await axios("http://localhost:3000/states",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json; charset=UTF-8"
-                    },
-                    data: payload
-                })
-            
+        try {
+            let {data} = await axios("http://localhost:3000/states",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=UTF-8"
+                },
+                data: payload
+            })        
             dispatch (postSheetRequestSuccess(data))
         }
         catch(e){
-            dispatch (postSheetRequestRequestFail(e))
+            dispatch (postSheetRequestFail(e))
         }
     }
 }
+
+
+const putSheetRequest = (payload) => ({
+    type: types.SAVE_SHEET,
+    payload
+})
+
+const putSheetRequestSuccess = (payload) => ({
+    type: types.SAVE_SHEET_SUCCESS,
+    payload
+});
+
+const putSheetRequestFail = (payload) => ({
+    type: types.SAVE_SHEET_FAIL,
+    payload
+});
 
 export function updateItem (payload, id) {
     return async function (dispatch){
@@ -108,28 +101,48 @@ export function updateItem (payload, id) {
             dispatch (putSheetRequestSuccess(data))
         }
         catch(e){
-            dispatch (putSheetRequestRequestFail(e))
+            dispatch (putSheetRequestFail(e))
         }
     }
 }
 
-// export function deleteItem ({id = 1}) {
-//     return async function (dispatch){
-//         dispatch (todoListRequest())
-//         try {            
-//              dispatch (putSheetRequestSuccess(
-//     await axios(`http://localhost:3000/states/${id}`,
-//     {
-//         method: "PUT",
-//         headers: {
-//             "Content-Type": "application/json; charset=UTF-8"
-//         },
-//         data: payload
-//     }))
-// )
-//         }
-//         catch(e){
-//             dispatch (todoListRequestFail(e))
-//         }
-//     }
-// }
+export const clearsheet = () => ({
+    type: types.CLEAR_SHEET
+});
+
+const deleteSheetRequest = (payload) => ({
+    type: types.SAVE_SHEET,
+    payload
+})
+
+const deleteSheetRequestSuccess = (payload) => ({
+    type: types.SAVE_SHEET_SUCCESS,
+    payload
+});
+
+const deleteSheetRequestFail = (payload) => ({
+    type: types.SAVE_SHEET_FAIL,
+    payload
+});
+
+export const clearFailRequest = (payload) => ({
+    type: types.CLEAR_FAIL,
+    payload
+});
+
+export function deleteItem ({id = 1}) {
+    return async function (dispatch){
+        dispatch (deleteSheetRequest())
+        try {            
+             dispatch (deleteSheetRequestSuccess(
+                await axios(`http://localhost:3000/states/${id}`,
+                {
+                    method: "DELETE"
+                }))
+            )
+        }
+        catch(e){
+            dispatch (deleteSheetRequestFail(e))
+        }
+    }
+}

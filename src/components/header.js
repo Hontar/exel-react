@@ -12,27 +12,24 @@ class Header extends Component{
     constructor(props) {
         super(props);   
         this.state = {      
-            ...this.defaultState
-        } 
-        this.defaultState = {      
             showInput: false,
-            touch: false,
             headerTitle: "",
-            toClearTable: false
+            showDelete: false
         } 
+        
         this.inputRef = React.createRef();
       }
 
     changeTitle = (e) => {
         console.log("title change",this.inputRef.current.value)
-        this.setState(prevstate => 
-            ({ ...prevstate, headerTitle: this.inputRef.current.value})
+        this.setState(prevState => 
+            ({ ...prevState, headerTitle: this.inputRef.current.value})
         )               
     }
 
     changeCellView = () => {  
-        this.setState(prevstate => 
-          ({ ...prevstate, showInput: !prevstate.showInput})
+        this.setState(prevState => 
+          ({ ...prevState, showInput: !prevState.showInput})
         )      
     }
 
@@ -47,35 +44,42 @@ class Header extends Component{
 
     createNewTable = () => {
         const {clearSheet} = this.props
-        console.log("+ click")
-        // this.setState( prevstate =>({
-        //     ...prevstate, toClearTable: !prevstate.toClearTable
-        // }))
+        console.log("+ click")       
         clearSheet()        
+    }
+
+    deleteTable = () => {
+        const {id, deleteItem} = this.props
+        console.log("DELETE", id)
+        // deleteItem(id)
+    }
+
+    componentDidUpdate = (prevProps, prevState) => {        
+        if (this.props.id && !prevProps.id ) {
+            console.log("HEADER didUpdate", this.props.id, prevState.showDelete)
+            this.setState ( prevState => ({
+                ...prevState, showDelete: !prevState.showDelete
+            }))
+        }
     }
     
     render(){
         const {title} = this.props
-        let {showInput, headerTitle} = this.state
+        let {showInput, headerTitle, showDelete} = this.state
 
-        console.log("render header", title)
-        // if (this.state.toClearTable){
-        //     return <Redirect to="/" />
-        // }
-
+        console.log("render header", title, showDelete)
+      
         return(
             <header className="header">
                 <div className="header__logo-box" title="Create new file">
                     <Link  to="/" onClick={this.createNewTable} >
                         <Icon type="file-excel" className="header__logo" />
                     </Link>
-                </div>
-                
-                    <div className="header__name-box" 
-                        onDoubleClick = {this.changeCellView}
-                    >
+                </div>                
+                <div className="header__name-box" 
+                    onDoubleClick = {this.changeCellView}>
                         {showInput && 
-                        <input 
+                            <input 
                                 className='header input'
                                 style = {{display: showInput ? "inline-block" : "none"}}
                                 autoFocus = {true}
@@ -84,15 +88,19 @@ class Header extends Component{
                                 onBlur={this.saveTitle}
                                 defaultValue={title}                                
                             /> 
-                            } 
-                            <span className="header__name"
-                                style = {{display: !showInput ? "inline-block" : "none"}}>
-                                    {title ? title : (headerTitle ? headerTitle : "Untitled")}
-                            </span>
-                            <span className="header__save">
-                                Save
-                            </span>
-                    </div> 
+                        } 
+                        <span className="header__name"
+                            style = {{display: !showInput ? "inline-block" : "none"}}>
+                                {title ? title : (headerTitle ? headerTitle : "Untitled")}
+                        </span>
+                        <span className="header__save">
+                            Save
+                        </span>
+                </div>
+                <div className="header__delete-box" title="Delete file" >
+                    {showDelete &&
+                        <Icon type="delete" onClick={this.deleteTable} />}
+                </div> 
             </header>
         )
     }
