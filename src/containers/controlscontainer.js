@@ -48,17 +48,19 @@ class ControlsContainer extends Component {
         return true
     }
 
-    // componentDidUpdate(prevProps, prevState) {              
-    //     let {start, end} = prevProps.selectionRange
-    //     if (this.props.enableArray){
-    //     //   console.log("range in input mutation", this.inputCell.current.value)
-    //       let prevValue = this.inputCell.current.value.toUpperCase().match(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)/g) || "="        
-    //       if (this.inputCell.current && this.inputCell.current.value.charAt(0) === "=" && start.x){ 
-    //         // console.log("range in input cruitios update", prevValue, this.inputCell.current.value )         
-    //         this.inputCell.current.value = `${prevValue} ${start.y + start.x} : ${end.y + end.x}`            
-    //       }
-    //     }      
-    //   }
+    componentDidUpdate(prevProps, prevState) {              
+        let {start, end} = this.props.selectionRange
+        if (this.props.enableArray){
+        //   console.log("range in input mutation", this.inputCell.current.value)
+        let enableRange = this.inputCell.current.value.toUpperCase().search(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*DIV)\s*\(\s*/g) >= 0         
+        let prevValue = this.inputCell.current.value.toUpperCase().match(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*DIV)/g) || "="          
+        if (this.inputCell.current && enableRange && start.x){ 
+            if (start.x === end.x && start.y === end.y) {
+                this.inputCell.current.value = `${prevValue} (${start.y + start.x} )`
+            } else this.inputCell.current.value = `${prevValue} (${start.y + start.x} : ${end.y + end.x})`            
+          }
+        }      
+      }
 
     render(){
         // console.log("render input", this.state.enableAutoFocus)
