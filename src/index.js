@@ -11,9 +11,7 @@ import "./style/index.scss";
 
 import store from "./store/store.js";
 
-store.subscribe(() => console.log(store.getState()))
-
-
+// store.subscribe(() => console.log(store.getState()))
 
 ReactDOM.render(
 	<Provider store={store}>

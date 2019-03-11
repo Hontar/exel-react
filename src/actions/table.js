@@ -33,6 +33,7 @@ export function getSheet ( id ) {
     }
 }
 
+
 const postSheetRequest = (payload) => ({
     type: types.SAVE_SHEET,
     payload
@@ -106,9 +107,12 @@ export function updateItem (payload, id) {
     }
 }
 
+
 export const clearSheet = () => ({
     type: types.CLEAR_SHEET
 });
+
+
 
 const deleteSheetRequest = (payload) => ({
     type: types.SAVE_SHEET,
@@ -129,6 +133,7 @@ export const clearFailRequest = (payload) => ({
     type: types.CLEAR_FAIL,
     payload
 });
+
 
 export function deleteItem (id) {
     return async function (dispatch){

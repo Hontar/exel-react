@@ -37,31 +37,6 @@ class MathTable extends Component {
         },
         counter: 0               
       }    
-      
-      // this.defaultState = {
-      //   table: {          
-      //   },
-      //   selection: {
-      //     selectedCells: [],
-      //     pressed: false,
-      //     startX: null,
-      //     startY: null,
-      //     endX: null,
-      //     endY: null
-      //   },
-      //   selectionInFormula: {
-      //     selectedCells: [],
-      //     pressed: false,
-      //     startX: null,
-      //     startY: null,
-      //     endX: null,
-      //     endY: null
-      //   },
-      //   currentCell: {
-      //     id: null, 
-      //     isEdited: false
-      //   }               
-      // }
     }
 
     componentDidUpdate = (prevProps, prevState) => {      
@@ -186,11 +161,15 @@ class MathTable extends Component {
           selectionInFormula: {
             ...prevState.selectionInFormula,
             pressed: false,            
+          },
+          currentCell: {
+            ...prevState.currentCell,
+            id: null
           }
         }));  
     }    
     
-    calculateValue = (state, formula) => {
+    calculateValue = (state, formula, id) => {
       let _value = null
       let stringCell = {
         formula: formula,
@@ -209,9 +188,14 @@ class MathTable extends Component {
             return {...stringCell} 
           }  else if (formula.charAt(0) === "="){
             try {
+              if (formula.length === 1){
+                throw "error"
+              }
               formula = formula.toUpperCase()
               let updatedFormula = formula
-              
+              if (formula.indexOf(id) >= 0){
+                throw "error"
+              }
               console.log("eval", formula, typeof formula)
               
               let divNull = formula.search(/\/(?=0)+/g)
@@ -230,7 +214,7 @@ class MathTable extends Component {
               console.log("rangeMatch", rangeMatch)
                 if (rangeMatch){
                   let start = formula.match(/[A-Z][0-9]/g)[0]                  
-                  let end = formula.match(/[A-Z][0-9]/g)[1]
+                  let end = formula.match(/[A-Z][0-9]/g)[1] || start
                   let startX = start.slice(1)
                   let endX = end.slice(1)
                   let arrFromState = this.getSelectedCells(startX, start[0], endX, end[0])
@@ -327,7 +311,7 @@ class MathTable extends Component {
       let id = "" + changedCell.id
       console.log("id", id)    
       let upDatedCell = Object.assign(
-        {}, changedCell, this.calculateValue(state, formula))
+        {}, changedCell, this.calculateValue(state, formula, id))
       console.log("stateCopy", state, id[0] )
       console.log("upDatedCell", upDatedCell )
       let cellX = id.slice(1)
@@ -403,10 +387,10 @@ class MathTable extends Component {
           y: selectionInFormula.endY
         }}
 
-      let data = this.cellTable("@", "F", 0, 10) 
+      let data = this.cellTable("@", "Z", 0, 40) 
       let list = data.map((item, i)=> {
               return (
-                  <tr key={i} >
+                  <tr key={i} className={i === 0 ? "row-first" : "row"} >
                       {item.map(cell => {                        
                         let {x, y} = cell
                         let key = y+x
@@ -425,7 +409,7 @@ class MathTable extends Component {
                                {
                                   ...initialCell,
                                   value: y == "@" ? savingStatus : y,
-                                  className: 'cell-title'
+                                  className: 'cell-title col'
                                 } } 
                               isEdited = {currentCell.isEdited}                             
                               />

@@ -42,7 +42,12 @@ class Cell extends Component {
     changeCellFormulaKeyboard = (e) => {  
       this.props.onSend(this.defaultCell.id, this.currentCell.current.value, this.props.cellFromState)     
       console.log(e.key, this.currentCell.current.value.charAt(0))  
-      if(this.currentCell.current.value.charAt(0) === "="){
+      let enableRange = this.currentCell.current.value.toUpperCase().search(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)\s*\(\s*/g) >= 0
+      if( enableRange ){
+        console.log("enableEditing" )
+        this.props.enableEditing(this.defaultCell.id, true) 
+        console.log("continue" )
+      } else if (this.currentCell.current.value.charAt(0) === "="){
         console.log("enableEditing" )
         this.props.enableEditing(this.defaultCell.id, true) 
         console.log("continue" )
@@ -105,20 +110,25 @@ class Cell extends Component {
 
     componentDidUpdate(prevProps, prevState) {
       let {selectionRange} = this.props
+      const enabledInput = this.currentCell.current
+      const endOfInput = /(\+|\-|\:|\*)$/g
       if ( selectionRange && selectionRange !== prevProps.selectionRange ){
         console.log("range in input satrt")
         let {start, end} = prevProps.selectionRange
+        let {startNew, endNew} = this.props.selectionRange
         if (this.state.showInput){
           console.log("range in input mutation", this.currentCell.current.value)
           let enableRange = this.currentCell.current.value.toUpperCase().search(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)\s*\(\s*/g) >= 0         
           let prevValue = this.currentCell.current.value.toUpperCase().match(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)/g) || "="        
-          if (this.currentCell.current && enableRange && start.x){ 
+          if (this.currentCell.current && enableRange && start.x ){ 
             console.log("enableRange", enableRange)
             console.log("range in input cruitios update", prevValue, this.currentCell.current.value )
             if (start.x === end.x && start.y === end.y) {
-              this.currentCell.current.value = `${prevValue} (${start.y + start.x} : `
+              this.currentCell.current.value = `${prevValue} (${start.y + start.x} )`
             } else this.currentCell.current.value = `${prevValue} (${start.y + start.x} : ${end.y + end.x})`              
             // this.props.onSend(this.defaultCell.id, this.currentCell.current.value, this.props.cellFromState)
+          } else if (enabledInput && enabledInput.value.charAt(0) === "=" && endOfInput.test(enabledInput.value) && start.x) {
+            enabledInput.value += `${start.y + start.x}`
           }
         }
       }      
@@ -135,7 +145,6 @@ class Cell extends Component {
         selected = "selected-formula";
       else 
         selected = this.props.cellFromState.className;
-      console.log("render cell", this.props)
       return(
         <td 
             className={`table_cell ${selected}`}

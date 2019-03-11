@@ -23,7 +23,6 @@ class Header extends Component{
       }
 
     changeTitle = (e) => {
-        console.log("title change",this.inputRef.current.value)
         this.setState(prevState => 
             ({ ...prevState, headerTitle: this.inputRef.current.value})
         )               
@@ -36,7 +35,6 @@ class Header extends Component{
     }
 
     saveTitle = () => {
-        console.dir("save title")
         const { updateItem, id } = this.props;
         if (id){
             updateItem({title: this.state.headerTitle}, id)
@@ -44,8 +42,13 @@ class Header extends Component{
         this.changeCellView()
     }
 
+    changeTitleKeyboard = (e) => {
+        if (e.key === 'Enter' ){
+            this.saveTitle()
+        } else this.changeTitle()
+    }
+
     createNewTable = () => {
-        console.log("+ click") 
         const {history, clearSheet} = this.props
         history.push("/")
         clearSheet()        
@@ -53,7 +56,6 @@ class Header extends Component{
 
     deleteTable = () => {
         const {id, deleteItem, history, clearSheet} = this.props
-        console.log("DELETE", id)
         deleteItem(id)        
         history.push("/")
         clearSheet()
@@ -61,7 +63,6 @@ class Header extends Component{
 
     componentDidUpdate = (prevProps, prevState) => {        
         if (this.props.id && !prevProps.id ) {
-            console.log("HEADER didUpdate", this.props.id, prevState.showDelete)
             this.setState ( prevState => ({
                 ...prevState, showDelete: !prevState.showDelete
             }))
@@ -71,8 +72,6 @@ class Header extends Component{
     render(){
         const {title} = this.props
         let {showInput, headerTitle, showDelete} = this.state
-
-        console.log("render header", title, showDelete)
       
         return(
             <header className="header">
@@ -89,7 +88,8 @@ class Header extends Component{
                                 style = {{display: showInput ? "inline-block" : "none"}}
                                 autoFocus = {true}
                                 ref={this.inputRef}
-                                onChange={this.changeTitle}
+                                onKeyUp={this.changeTitleKeyboard}
+                                // onChange={this.changeTitle}
                                 onBlur={this.saveTitle}
                                 defaultValue={title}                                
                             /> 
@@ -97,19 +97,11 @@ class Header extends Component{
                         <span className="header__name"
                             style = {{display: !showInput ? "inline-block" : "none"}}>
                                 {title ? title : (headerTitle ? headerTitle : "Untitled")}
-                        </span>
-                        {/* <div className="header__save-box" title="Save file" >                            
-                            <Icon type="save" className="header__icon" />                           
-                        </div> */}
+                        </span>                       
                 </div>
                 <div className="header__delete-box" title="Delete file" >
-                    {showDelete &&
-                    <>                        
-                        <Icon type="delete" onClick={this.deleteTable} className="header__icon" />
-                        {/* <span>
-                            Delete
-                        </span> */}
-                    </>
+                    {showDelete &&                                            
+                        <Icon type="delete" onClick={this.deleteTable} className="header__icon" />                   
                     }
                 </div> 
             </header>

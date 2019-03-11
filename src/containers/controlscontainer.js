@@ -9,42 +9,10 @@ import {actionInputCell} from "../actions/acs";
 class ControlsContainer extends Component {
     constructor(props){
         super(props)
-        this.state = {             
-            controls:{
-                funcSelect: {
-                    inputType: 'select',
-                    config: {
-                        option: [
-                            {value: 'f',
-                                name: 'f'}, 
-                            {value: 'sum',
-                                name: 'sum'}, 
-                            {value: 'diff',
-                                name: 'diff'}, 
-                            {value: 'prod',
-                                name: 'prod'}, 
-                            {value: 'quot',
-                                name: 'quot'}
-                        ] 
-                    }
-                },
-    //             input: {
-    //                 value: "",
-    //                 config: {
-    //                     type: "text",
-    //                     name: "formula"
-    //                 }
-    //             }
-    //         },
-    //         allCells: [],
-    //         currentCell: {
-    //             id: "",
-    //             formula: ""
-    //         }
-        }
+        
+        this.inputCell = React.createRef()
     }
-    this.inputCell = React.createRef()
-}
+
     sendFormula = () => this.props.onSend(this.props.cell.id, this.inputCell.value, this.props.cell.cell )
 
     changeCellFormulaKeyboard = (e) => {
@@ -65,11 +33,7 @@ class ControlsContainer extends Component {
             console.log("update")
             this.props.update( this.props.cell.cell, this.inputCell.current.value)
         }
-    };
-
-    // selectFormula = (e) => {
-    //     this.inputCell.value = `=${e.target.value}()`
-    // }
+    };    
 
     shouldComponentUpdate(nextProps, nextState, nextContext){
         if(nextProps.formula !== this.props.cell.formula)
@@ -95,20 +59,7 @@ class ControlsContainer extends Component {
         <div className='controls'>
             <span name='id' className='controls_current-id' > 
                 {this.props.cell.id ? this.props.cell.id : "ID" } 
-            </span>
-            {/* <InputComponent 
-                inputType='select'
-                config={{
-                    option: this.state.controls.funcSelect.config.option, 
-                    disabled: this.props.cell.id ? false : true,
-                    className: 'controls_formula-select',
-                    onChange: this.selectFormula
-                }}
-
-            /> */}
-            {/* <span className='controls_formula-select' > 
-                f
-            </span> */}
+            </span>            
             <input 
                 className='controls_input'
                 name='formula'
@@ -122,22 +73,7 @@ class ControlsContainer extends Component {
             />
         </div>
         )
-    }
-    //     const { controls } = this.state
-
-    //     return(
-    //         <div>
-    //             {Object.keys(controls).map(el => (
-    //                 <InputComponent
-    //                 key={el}
-    //                 inputType={controls[el].inputType} 
-    //                 config={{ ...controls[el].config, value: controls[el].value }}
-    //                 />
-    //             ))}
-    //         </div>
-    //     )
-    // }
-
+    }    
 
     static get defaultProps(){
         return {

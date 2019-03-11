@@ -40,6 +40,15 @@
             "value": "5",
             "className": "cell"
           }
+        },
+        "D": {
+          "4": {
+            "id": "D4",
+            "x": 4,
+            "y": "D",
+            "formula": "=",
+            "className": "cell"
+          }
         }
       }
     },
@@ -85,6 +94,22 @@
           }
         }
       }
+    },
+    {
+      "title": "New2",
+      "table": {
+        "B": {
+          "2": {
+            "id": "B2",
+            "x": 2,
+            "y": "B",
+            "value": "asdf",
+            "formula": "asdf",
+            "className": "cell left"
+          }
+        }
+      },
+      "id": "oWozjnE"
     }
   ]
 }

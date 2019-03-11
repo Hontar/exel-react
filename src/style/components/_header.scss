@@ -1,15 +1,14 @@
 .header {
-	position: relative;
+	position: fixed;
+	top: 0;
 	width: 100%;
 	background-color: $color-green;
 	display: flex;
 	justify-content: start;
 	align-items: center;
+	z-index: 50;
 
 	&__logo-box {
-		// display: flex;
-		// justify-content: center;
-		// align-items: center;
 		margin-left: 3rem;
 	}
 
@@ -30,7 +29,6 @@
 		line-height: 1.4rem;
 		margin-left: 2rem;
 		display: inline-block;
-		// width: 7rem;	
 		& input {
 			width: 7rem;	
 		}			
@@ -55,15 +53,16 @@
 	}
 	
 	& input{ 
-		background-color: $color-white;      
+		position: relative;
+		background-color: #c1e4d1;      
         outline: none!important;
 		border: none;
 		margin-left: 2rem;
-		padding: 0 0.5rem;
-        // box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        text-align: right;
+		padding: 0 0.3rem;
+        text-align: left;
 		width: 7rem;		
 		height: 1.4rem;
-        box-sizing: border-box;
+		box-sizing: border-box;
+		font-size: 1.4rem;
     }	   
 }
