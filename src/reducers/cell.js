@@ -27,7 +27,7 @@ export default (state, action) => {
       // selected: 'selected'
     }
   }
-  if (state === 'CELL_CLEAR'){
+  if (action.type === 'CELL_CLEAR'){
     return {
       id: null,
       formula: '',

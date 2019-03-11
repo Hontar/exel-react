@@ -24,18 +24,18 @@ class Cell extends Component {
     
     changeCellFormula = (e) => {  
       e.preventDefault()
-      // console.log("input",  this.currentCell, this.currentCell.current.value,this.props.isEdited ) 
+      console.log("input",  this.currentCell, this.currentCell.current.value,this.props.isEdited ) 
       if ( !this.props.isEdited) {
         // if(this.currentCell.value !== this.defaultCell.formula){
           this.props.update( this.props.cellFromState, this.currentCell.current.value);
-          // console.log("hide input")  
+          console.log("hide input")  
           this.setState(prevstate => 
             ({ ...prevstate, showInput: !prevstate.showInput})
           )
           this.currentCell.current.blur()
         // }
       } else {
-        // console.log("focus")
+        console.log("focus")
         this.currentCell.current.focus()} 
     }
 
@@ -44,25 +44,24 @@ class Cell extends Component {
       console.log(e.key, this.currentCell.current.value.charAt(0))  
       let enableRange = this.currentCell.current.value.toUpperCase().search(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)\s*\(\s*/g) >= 0
       if( enableRange ){
-        // console.log("enableEditing" )
+        console.log("enableEditing" )
         this.props.enableEditing(this.defaultCell.id, true) 
-        // console.log("continue" )
+        console.log("continue" )
       } else if (this.currentCell.current.value.charAt(0) === "="){
-        // console.log("enableEditing" )
+        console.log("enableEditing" )
         this.props.enableEditing(this.defaultCell.id, true) 
-        // console.log("continue" )
+        console.log("continue" )
       }
       if (e.key === 'Enter' ){
-        // console.log("enter")
+        console.log("enter")
         this.props.update( this.props.cellFromState, this.currentCell.current.value);
         this.props.enableEditing(this.defaultCell.id, false)  
         this.setState(prevstate => 
           ({ ...prevstate, showInput: !prevstate.showInput})
         ) 
       } else {
-        // console.log("focus")
+        console.log("focus")
         this.props.onSend(this.defaultCell.id, this.currentCell.current.value, this.props.cellFromState)
-        this.currentCell.current.focus()
       } 
     }
 
@@ -74,14 +73,13 @@ class Cell extends Component {
 
     setCurrent = () => {
       if (this.props.cellFromState.className === "cell-title" && !this.props.isEdited){
-        // console.log('cell-title')
+        console.log('cell-title')
         this.props.actionCellClear()
         return
-      } else if (!this.props.isEdited){
-        console.log('SET CURRENT', this.defaultCell.id, this.props.cellFromState.formula, this.props.cellFromState)
+      } 
+      console.log('click')
+      if (!this.props.isEdited)
         this.props.onSend(this.defaultCell.id, this.props.cellFromState.formula, this.props.cellFromState)
-      }
-        
       // else { console.log("focus", this.props.isEdited)
       //   this.currentCell.focus()}
     }
@@ -115,18 +113,17 @@ class Cell extends Component {
       const enabledInput = this.currentCell.current
       const endOfInput = /(\+|\-|\:|\*)$/g
       if ( selectionRange && selectionRange !== prevProps.selectionRange ){
-        // console.log("range in input satrt")
+        console.log("range in input satrt")
         let {start, end} = prevProps.selectionRange
-        let {startNew, endNew} = this.props.selectionRange
         if (this.state.showInput){
-          // console.log("range in input mutation", this.currentCell.current.value)
+          console.log("range in input mutation", this.currentCell.current.value)
           let enableRange = this.currentCell.current.value.toUpperCase().search(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)\s*\(\s*/g) >= 0         
           let prevValue = this.currentCell.current.value.toUpperCase().match(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*QUOT)/g) || "="        
-          if (this.currentCell.current && enableRange && start.x ){ 
-            // console.log("enableRange", enableRange)
-            // console.log("range in input cruitios update", prevValue, this.currentCell.current.value )
+          if (this.currentCell.current && enableRange && start.x){ 
+            console.log("enableRange", enableRange)
+            console.log("range in input cruitios update", prevValue, this.currentCell.current.value )
             if (start.x === end.x && start.y === end.y) {
-              this.currentCell.current.value = `${prevValue} (${start.y + start.x} )`
+              this.currentCell.current.value = `${prevValue} (${start.y + start.x} `
             } else this.currentCell.current.value = `${prevValue} (${start.y + start.x} : ${end.y + end.x})`              
             // this.props.onSend(this.defaultCell.id, this.currentCell.current.value, this.props.cellFromState)
           } else if (enabledInput && enabledInput.value.charAt(0) === "=" && endOfInput.test(enabledInput.value) && start.x) {
@@ -137,7 +134,6 @@ class Cell extends Component {
     }
   
     render(){
-      console.log("CELL", this.props)
       let showInput = this.state.showInput
       let selected 
       if(/*this.props.active &&*/ this.props.isFirst)
@@ -148,6 +144,7 @@ class Cell extends Component {
         selected = "selected-formula";
       else 
         selected = this.props.cellFromState.className;
+      console.log("render cell", this.props)
       return(
         <td 
             className={`table_cell ${selected}`}

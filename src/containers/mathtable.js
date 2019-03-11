@@ -36,22 +36,22 @@ class MathTable extends Component {
           isEdited: false
         },
         counter: 0               
-      }    
+      }   
     }
 
     componentDidUpdate = (prevProps, prevState) => {      
       let {table, id, saveItem, updateItem } = this.props
       if ( table && table !== prevProps.table ){
-        // console.log("table", table)      
+        console.log("table", table)      
         this.setState( prevState => ({ 
           ...prevState,       
           table: table,
           counter: 2          
         }))
       } 
-      // console.log("mathtable didupdate counter", prevState.counter, this.state.counter, prevState, this.state)
+      console.log("mathtable didupdate counter", prevState.counter, this.state.counter, prevState, this.state)
       if (prevState.counter == 0 && this.state.counter == 1 && prevState.table !== this.state.table){
-        // console.log("table changed")
+        console.log("table changed")
         saveItem({
           title: "Untitled",        
           // item: (+new Date).toString(16).substr(4),
@@ -61,7 +61,7 @@ class MathTable extends Component {
       } else if(this.state.counter > 0 && this.state.counter < 10 && prevState.table !== this.state.table){
         console.log("pass update", this.state.table)
       } else if( this.state.counter === 10 && prevState.counter !== this.state.counter){
-        // console.log("can update", id, this.state.table)
+        console.log("can update", id, this.state.table)
         updateItem({table: this.state.table}, id)
       }
     } 
@@ -111,10 +111,12 @@ class MathTable extends Component {
     continueSelecting = (_x, _y) => {
       let kindOfSelection = this.state.currentCell.isEdited ? "selectionInFormula" : "selection"    
 
-      if (this.state[kindOfSelection].pressed && this.state[kindOfSelection].startX !== _x && this.state[kindOfSelection].startX !== _y ){
-        console.log("start id",_y+_x, kindOfSelection, this.state[kindOfSelection].pressed, this.state.selection.start, this.state.selectionInFormula.start )
+      if (this.state[kindOfSelection].pressed 
+        && this.state[kindOfSelection].startY + this.state[kindOfSelection].startX !== this.state.currentCell.id 
+      ){
+        // console.log("start id",_y+_x, kindOfSelection, this.state[kindOfSelection].pressed, this.state.selection.start, this.state.selectionInFormula.start )
         let newSelectionArray = this.getSelectedCells(this.state[kindOfSelection].startX, this.state[kindOfSelection].startY, _x, _y)
-        console.log("selected array", newSelectionArray)
+        // console.log("selected array", newSelectionArray)
         this.setState( prevState => ({
           ...prevState,           
           [kindOfSelection]: {
@@ -161,11 +163,7 @@ class MathTable extends Component {
           selectionInFormula: {
             ...prevState.selectionInFormula,
             pressed: false,            
-          },
-          currentCell: {
-            ...prevState.currentCell,
-            id: null
-          }
+          }          
         }));  
     }    
     
@@ -219,6 +217,9 @@ class MathTable extends Component {
                   let endX = end.slice(1)
                   let arrFromState = this.getSelectedCells(startX, start[0], endX, end[0])
                   console.log("arrFromState", arrFromState)
+                  if (arrFromState.indexOf(id) >= 0){
+                    throw "error"
+                  }
                   
                   let arrOfValues = []
                   arrFromState.forEach(item => {
