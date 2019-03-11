@@ -37,16 +37,66 @@
             "x": 2,
             "y": "B",
             "formula": "=3+A1",
-            "value": "5",
+            "value": 5,
+            "className": "cell"
+          },
+          "5": {
+            "id": "B5",
+            "x": 5,
+            "y": "B",
+            "value": 275000000,
+            "formula": "= PROD (B1 : D2)",
             "className": "cell"
           }
         },
         "D": {
+          "1": {
+            "id": "D1",
+            "x": 1,
+            "y": "D",
+            "value": "10",
+            "formula": "10",
+            "className": "cell"
+          },
+          "2": {
+            "id": "D2",
+            "x": 2,
+            "y": "D",
+            "value": "20",
+            "formula": "20",
+            "className": "cell"
+          },
           "4": {
             "id": "D4",
             "x": 4,
             "y": "D",
             "formula": "=",
+            "className": "cell"
+          },
+          "5": {
+            "id": "D5",
+            "x": 5,
+            "y": "D",
+            "value": 618,
+            "formula": "= SUM (A1 : D2)",
+            "className": "cell"
+          }
+        },
+        "C": {
+          "1": {
+            "id": "C1",
+            "x": 1,
+            "y": "C",
+            "value": "50",
+            "formula": "50",
+            "className": "cell"
+          },
+          "2": {
+            "id": "C2",
+            "x": 2,
+            "y": "C",
+            "value": "500",
+            "formula": "500",
             "className": "cell"
           }
         }

@@ -61,7 +61,7 @@ class ControlsContainer extends Component {
     //   }
 
     render(){
-        console.log("render input", this.state.enableAutoFocus)
+        // console.log("render input", this.state.enableAutoFocus)
         return (
         <div className='controls' key={this.props.cell.formula} >
             <span name='id' className='controls_current-id' > 
