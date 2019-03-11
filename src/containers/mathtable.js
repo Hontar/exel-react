@@ -42,16 +42,16 @@ class MathTable extends Component {
     componentDidUpdate = (prevProps, prevState) => {      
       let {table, id, saveItem, updateItem } = this.props
       if ( table && table !== prevProps.table ){
-        console.log("table", table)      
+        // console.log("table", table)      
         this.setState( prevState => ({ 
           ...prevState,       
           table: table,
           counter: 2          
         }))
       } 
-      console.log("mathtable didupdate counter", prevState.counter, this.state.counter, prevState, this.state)
+      // console.log("mathtable didupdate counter", prevState.counter, this.state.counter, prevState, this.state)
       if (prevState.counter == 0 && this.state.counter == 1 && prevState.table !== this.state.table){
-        console.log("table changed")
+        // console.log("table changed")
         saveItem({
           title: "Untitled",        
           // item: (+new Date).toString(16).substr(4),
@@ -61,7 +61,7 @@ class MathTable extends Component {
       } else if(this.state.counter > 0 && this.state.counter < 10 && prevState.table !== this.state.table){
         console.log("pass update", this.state.table)
       } else if( this.state.counter === 10 && prevState.counter !== this.state.counter){
-        console.log("can update", id, this.state.table)
+        // console.log("can update", id, this.state.table)
         updateItem({table: this.state.table}, id)
       }
     } 
