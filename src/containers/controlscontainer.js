@@ -17,11 +17,16 @@ class ControlsContainer extends Component {
 }
    
     changeCellFormulaKeyboard = (e) => {
-        const { update, actionInputCell } = this.props
+        const { update, actionInputCell, enableEditing } = this.props
+        let enableRange = this.inputCell.current.value.toUpperCase().search(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*DIV)\s*\(\s*/g) >= 0
+        if (enableRange){
+            enableEditing( this.props.cell.id, true)
+        }
         if (e.key === 'Enter' ){
             if (this.inputCell.current.value !== this.props.cell.cell.formula){
                 update( this.props.cell.cell, this.inputCell.current.value)                
             }
+            enableEditing( this.props.cell.id, false)
             this.setState({enableAutoFocus: false})
             this.inputCell.current.blur()
           } else {
@@ -33,18 +38,22 @@ class ControlsContainer extends Component {
 
     updateState = (e) => {
         e.preventDefault()
-        if (this.state.enableAutoFocus && this.inputCell.current.value !== this.props.cell.cell.formula){
-            this.props.update( this.props.cell.cell, this.inputCell.current.value)
-            this.inputCell.current.blur()
-            this.setState({enableAutoFocus: false})
-        } else this.inputCell.current.focus()
+        if (this.state.enableAutoFocus){
+            if(this.inputCell.current.value !== this.props.cell.cell.formula){
+                this.props.update( this.props.cell.cell, this.inputCell.current.value)
+                this.inputCell.current.blur()
+                this.setState({enableAutoFocus: false})
+            } else {
+                this.inputCell.current.focus()
+                this.setState({enableAutoFocus: false})
+            }
+        }
     };
 
     shouldComponentUpdate(nextProps, nextState, nextContext){        
         if(nextProps.cell.id !== this.props.cell.id){
             return true;
-        }
-            
+        }            
         return true
     }
 

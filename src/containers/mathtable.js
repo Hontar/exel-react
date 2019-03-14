@@ -480,6 +480,7 @@ class MathTable extends Component {
               update={this.updateState}
               enableArray = {currentCell.isEdited}           
               selectionRange = {_selectionRange} 
+              enableEditing={this.enableEditing}
             />
             <div className='table-box' >
               <table className='table' >

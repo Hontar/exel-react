@@ -6,6 +6,7 @@ import { bindActionCreators } from "redux";
 import { withRouter } from 'react-router-dom'
 
 import * as actions from "../actions/table";
+import * as actionsCell from "../actions/acs";
 
 import { Icon } from 'antd';
 
@@ -34,6 +35,11 @@ class Header extends Component{
         )      
     }
 
+    changeDeleteView = () => {  
+        this.setState(prevState => 
+            ({ ...prevState, showDelete: !prevState.showDelete}))              
+    }
+
     saveTitle = () => {
         const { updateItem, id } = this.props;
         if (id){
@@ -49,23 +55,24 @@ class Header extends Component{
     }
 
     createNewTable = () => {
-        const {history, clearSheet} = this.props
+        const {history, clearSheet, actionCellClear} = this.props
         history.push("/")
-        clearSheet()        
+        this.changeDeleteView()
+        clearSheet()   
+        actionCellClear()     
     }
 
     deleteTable = () => {
         const {id, deleteItem, history, clearSheet} = this.props
         deleteItem(id)        
         history.push("/")
+        this.changeDeleteView()
         clearSheet()
     }
 
     componentDidUpdate = (prevProps, prevState) => {        
         if (this.props.id && !prevProps.id ) {
-            this.setState ( prevState => ({
-                ...prevState, showDelete: !prevState.showDelete
-            }))
+            this.changeDeleteView()
         }
     }
     
@@ -115,7 +122,7 @@ const mapStateToProps = state => {
 		title: state.table.title		
 	};
 };
-const mapDispatchToProps = dispatch => bindActionCreators({ ...actions }, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators({ ...actions, ...actionsCell }, dispatch);
 
 export default connect(
 	mapStateToProps,

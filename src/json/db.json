@@ -3,7 +3,6 @@
     {
       "title": "First",
       "id": "1",
-      "item": "12",
       "table": {
         "A": {
           "1": {
@@ -104,7 +103,6 @@
     },
     {
       "id": "2",
-      "item": "2",
       "title": "second222",
       "table": {
         "A": {
@@ -160,6 +158,22 @@
         }
       },
       "id": "oWozjnE"
+    },
+    {
+      "title": "Untitled",
+      "table": {
+        "D": {
+          "5": {
+            "id": "D5",
+            "x": 5,
+            "y": "D",
+            "value": "error",
+            "formula": "= SUM (B2 )",
+            "className": "cell-error"
+          }
+        }
+      },
+      "id": "WogxUQ-"
     }
   ]
 }
