@@ -1,5 +1,10 @@
 https://hontar.github.io/exel-react/
-JSON-server needed
+
+JSON-server needed to save changes
+
+to start formula enter "="
+
+to start sum, diff, prod, div formulas enter "= sum (" and selection of range will be anabled
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
