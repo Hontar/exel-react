@@ -1,14 +1,9 @@
-// import * as types from "../constants/actionTypes";
-
-// import initialState from "../store/initialState";
-
 export default (state, action) => {
   if (state === undefined){
     return {
       id: null,
       formula: '',
       cell: {},
-      // selected: false
     }
   }
   if (action.type === 'CELL_CURRENT'){
@@ -16,7 +11,6 @@ export default (state, action) => {
       id: action.id,
       formula: action.formula,
       cell: action.cell,
-      // selected: 'selected'
     }
   }
   if (action.type === 'CELL_SELECTED'){
@@ -24,7 +18,6 @@ export default (state, action) => {
       id: action.id,
       formula: action.formula,
       cell: action.cell,
-      // selected: 'selected'
     }
   }
   if (action.type === 'CELL_CLEAR'){
@@ -32,7 +25,6 @@ export default (state, action) => {
       id: null,
       formula: '',
       cell: {},
-      // selected: false
     }
   }
   return state;

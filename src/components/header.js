@@ -29,7 +29,7 @@ class Header extends Component{
         )               
     }
 
-    changeCellView = () => {  
+    changeTitleView = () => {  
         this.setState(prevState => 
           ({ ...prevState, showInput: !prevState.showInput})
         )      
@@ -45,7 +45,7 @@ class Header extends Component{
         if (id){
             updateItem({title: this.state.headerTitle}, id)
         }            
-        this.changeCellView()
+        this.changeTitleView()
     }
 
     changeTitleKeyboard = (e) => {
@@ -88,7 +88,7 @@ class Header extends Component{
                     </Link>
                 </div>                
                 <div className="header__name-box" 
-                    onDoubleClick = {this.changeCellView}>
+                    onDoubleClick = {this.changeTitleView}>
                         {showInput && 
                             <input 
                                 className='header input'
@@ -96,7 +96,6 @@ class Header extends Component{
                                 autoFocus = {true}
                                 ref={this.inputRef}
                                 onKeyUp={this.changeTitleKeyboard}
-                                // onChange={this.changeTitle}
                                 onBlur={this.saveTitle}
                                 defaultValue={title}                                
                             /> 

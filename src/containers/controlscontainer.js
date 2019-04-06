@@ -17,20 +17,20 @@ class ControlsContainer extends Component {
 }
    
     changeCellFormulaKeyboard = (e) => {
-        const { update, actionInputCell, enableEditing } = this.props
+        const { update, actionInputCell, enableEditing, cell } = this.props
         let enableRange = this.inputCell.current.value.toUpperCase().search(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*DIV)\s*\(\s*/g) >= 0
         if (enableRange){
-            enableEditing( this.props.cell.id, true)
+            enableEditing ( cell.id, true) // enable selection of range
         }
         if (e.key === 'Enter' ){
-            if (this.inputCell.current.value !== this.props.cell.cell.formula){
-                update( this.props.cell.cell, this.inputCell.current.value)                
+            if (this.inputCell.current.value !== cell.cell.formula){
+                update( cell.cell, this.inputCell.current.value) // mathTable method to calculate and update value. cell - object from redux from current cell               
             }
-            enableEditing( this.props.cell.id, false)
+            enableEditing( cell.id, false)
             this.setState({enableAutoFocus: false})
             this.inputCell.current.blur()
           } else {
-            actionInputCell(this.props.cell.id, this.inputCell.current.value, this.props.cell.cell )
+            actionInputCell(cell.id, this.inputCell.current.value, cell.cell )
             this.setState({enableAutoFocus: true})
             this.inputCell.current.focus()
         }
@@ -38,9 +38,10 @@ class ControlsContainer extends Component {
 
     updateState = (e) => {
         e.preventDefault()
+        const {update, cell} = this.props
         if (this.state.enableAutoFocus){
-            if(this.inputCell.current.value !== this.props.cell.cell.formula){
-                this.props.update( this.props.cell.cell, this.inputCell.current.value)
+            if(this.inputCell.current.value !== cell.cell.formula){
+                update( this.props.cell.cell, this.inputCell.current.value)
                 this.inputCell.current.blur()
                 this.setState({enableAutoFocus: false})
             } else {
@@ -58,21 +59,19 @@ class ControlsContainer extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {              
-        let {start, end} = this.props.selectionRange
-        if (this.props.enableArray){
-        //   console.log("range in input mutation", this.inputCell.current.value)
-        let enableRange = this.inputCell.current.value.toUpperCase().search(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*DIV)\s*\(\s*/g) >= 0         
-        let prevValue = this.inputCell.current.value.toUpperCase().match(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*DIV)/g) || "="          
-        if (this.inputCell.current && enableRange && start.x){ 
-            if (start.x === end.x && start.y === end.y) {
-                this.inputCell.current.value = `${prevValue} (${start.y + start.x} )`
-            } else this.inputCell.current.value = `${prevValue} (${start.y + start.x} : ${end.y + end.x})`            
-          }
+        let {start, end} = this.props.selectionRange 
+        if (this.props.enableArray){ // to display selection of group of cells in real time
+            let enableRange = this.inputCell.current.value.toUpperCase().search(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*DIV)\s*\(\s*/g) >= 0         
+            let prevValue = this.inputCell.current.value.toUpperCase().match(/(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*DIV)/g) || "="          
+            if (this.inputCell.current && enableRange && start.x){ 
+                if (start.x === end.x && start.y === end.y) {
+                    this.inputCell.current.value = `${prevValue} (${start.y + start.x} )`
+                } else this.inputCell.current.value = `${prevValue} (${start.y + start.x} : ${end.y + end.x})`            
+            }
         }      
-      }
+    }
 
     render(){
-        // console.log("render input", this.state.enableAutoFocus)
         return (
         <div className='controls' key={this.props.cell.formula} >
             <span name='id' className='controls_current-id' > 
@@ -91,8 +90,7 @@ class ControlsContainer extends Component {
             />
         </div>
         )
-    }
-   
+    }   
 
     static get defaultProps(){
         return {
@@ -113,6 +111,7 @@ const mapStateToProps = state => {
         cell: state.cell		
 	};
 };
+
 const mapDispatchToProps = dispatch => bindActionCreators({ ...actions }, dispatch);
 
 export default connect(

@@ -14,8 +14,7 @@ import Header from '../components/Header'
 class AppContainer extends Component {
    
     componentDidMount = () => {
-        const { match } = this.props;
-        const {getSheet} = this.props;
+        const { match, getSheet } = this.props;
         if (match.params.id){
             getSheet(match.params.id)
         }             

@@ -42,16 +42,13 @@ class MathTable extends Component {
     componentDidUpdate = (prevProps, prevState) => {      
       let {table, id, saveItem, updateItem } = this.props
       if ( table && table !== prevProps.table ){
-        // console.log("table", table)      
         this.setState( prevState => ({ 
           ...prevState,       
           table: table,
-          counter: 2          
+          counter: 2      // to avoid saving when loading saved file    
         }))
       } 
-      // console.log("mathtable didupdate counter", prevState.counter, this.state.counter, prevState, this.state)
       if (prevState.counter == 0 && this.state.counter == 1 && prevState.table !== this.state.table){
-        // console.log("table changed")
         saveItem({
           title: "Untitled",        
           // item: (+new Date).toString(16).substr(4),
@@ -59,9 +56,9 @@ class MathTable extends Component {
         })
         this.props.history.push(`/${id}`)
       } else if(this.state.counter > 0 && this.state.counter < 10 && prevState.table !== this.state.table){
+        // here max number of changes between savings can be set
         console.log("pass update", this.state.table)
       } else if( this.state.counter === 10 && prevState.counter !== this.state.counter){
-        // console.log("can update", id, this.state.table)
         updateItem({table: this.state.table}, id)
       }
     } 
@@ -87,7 +84,6 @@ class MathTable extends Component {
     )}
 
     startSelecting = (_x, _y) => {
-      // console.log("this state start selecting", _y+_x)
       let flag = this.state.currentCell.isEdited  
       let newSelectionObj = {
         selectedCells: [(_y+_x)],
@@ -114,9 +110,7 @@ class MathTable extends Component {
       if (this.state[kindOfSelection].pressed 
         && this.state[kindOfSelection].startY + this.state[kindOfSelection].startX !== this.state.currentCell.id 
       ){
-        // console.log("start id",_y+_x, kindOfSelection, this.state[kindOfSelection].pressed, this.state.selection.start, this.state.selectionInFormula.start )
         let newSelectionArray = this.getSelectedCells(this.state[kindOfSelection].startX, this.state[kindOfSelection].startY, _x, _y)
-        // console.log("selected array", newSelectionArray)
         this.setState( prevState => ({
           ...prevState,           
           [kindOfSelection]: {
@@ -140,7 +134,6 @@ class MathTable extends Component {
             selected.push((col+row));
         });
       });
-      // console.log("getSelectedCells", selected)
       return selected;
     }
 
@@ -174,160 +167,140 @@ class MathTable extends Component {
     calculateValue = (state, formula, id) => {
       let _value = null
       let operation = null
-      let rangeMatch = null
-      let matches = null
+      let rangeMatch = null      
       let stringCell = {
         formula: formula,
         value: formula,
         className: 'cell left'
       }
      
-      // console.log("formula", formula, typeof formula, formula.charAt(0))
-          if(formula.charAt(0) === "'"){ 
-            // console.log("value '", formula, typeof formula)        
-            return {...stringCell,
-                    value: formula.substring(1)
-                    } 
-          } else if(formula.charAt(0) === '"' || formula.charAt(0) === "`"){ 
-            // console.log("value " , formula, typeof formula)        
-            return {...stringCell} 
-          }  else if (formula.charAt(0) === "="){
-            try {
-              if (formula.length === 1){
-                throw "error"
-              }
-              formula = formula.toUpperCase()
-              let updatedFormula = formula
-              if (formula.indexOf(id) >= 0){
-                throw "error"
-              }
-              // console.log("eval", formula, typeof formula)
-              
-              let divNull = formula.search(/\/(?=0)+/g)
-              if (divNull > 0)
-                return {formula: formula,
-                  value: '#DIV/0!',
-                  className: 'cell-error'};
-              
-              let notProperSymbols = formula.search(/[^*/+=() :\-0-9A-Z]+/g)
-              if (notProperSymbols > 0)
-                return {formula: formula,
-                  value: '#NAME?',
-                  className: 'cell-error'};
+      if(formula.charAt(0) === "'"){ 
+        return {...stringCell,
+                value: formula.substring(1)
+                } 
+      } else if(formula.charAt(0) === '"' || formula.charAt(0) === "`"){ 
+        return {...stringCell} 
+      }  else if (formula.charAt(0) === "="){
+        try {
+          if (formula.length === 1){
+            throw "error"
+          }
 
-              rangeMatch = formula.search(/^(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*DIV)\s*\(\s*[A-Z][0-9]+\s*:\s*[A-Z][0-9]+\s*\)/g) >= 0
-              console.log("rangeMatch", rangeMatch)
-                if (rangeMatch){
-                  let start = formula.match(/[A-Z][0-9]/g)[0]                  
-                  let end = formula.match(/[A-Z][0-9]/g)[1] || start
-                  let startX = start.slice(1)
-                  let endX = end.slice(1)
-                  let arrFromState = this.getSelectedCells(startX, start[0], endX, end[0])
-                  console.log("arrFromState", arrFromState)
-                  if (arrFromState.indexOf(id) >= 0){
-                    throw "error"
+          formula = formula.toUpperCase()
+          let updatedFormula = formula
+
+          if (formula.indexOf(id) >= 0){
+            throw "error"
+          }
+          
+          let divNull = formula.search(/\/(?=0)+/g)
+          if (divNull > 0)
+            return {formula: formula,
+              value: '#DIV/0!',
+              className: 'cell-error'};
+          
+          let notProperSymbols = formula.search(/[^*/+=() :\-0-9A-Z]+/g)
+          if (notProperSymbols > 0)
+            return {formula: formula,
+              value: '#NAME?',
+              className: 'cell-error'};
+
+          rangeMatch = formula.search(/^(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*DIV)\s*\(\s*[A-Z][0-9]+\s*:\s*[A-Z][0-9]+\s*\)/g) >= 0
+            if (rangeMatch){
+              let start = formula.match(/[A-Z][0-9]/g)[0]                  
+              let end = formula.match(/[A-Z][0-9]/g)[1] || start
+              let startX = start.slice(1)
+              let endX = end.slice(1)
+              let arrFromState = this.getSelectedCells(startX, start[0], endX, end[0]) // array of id in selected range
+              if (arrFromState.indexOf(id) >= 0){
+                throw "error"
+              }
+              
+              let arrOfValues = []
+              arrFromState.forEach(item => {
+                let cellX = item.slice(1)
+                let foundValue = state[item[0]] && 
+                                state[item[0]][cellX] && 
+                                state[item[0]][cellX].value ? 
+                                +state[item[0]][cellX].value : 0
+                arrOfValues.push(foundValue)
+              })
+              
+              operation = formula.match(/(\s*SUM|\s*DIFF|\s*PROD|\s*DIV)/g)[0].trim().toLowerCase()
+              switch(operation){
+                  case ('sum'): { 
+                    _value = arrOfValues.reduce((prevValue, currentValue) => 
+                      prevValue + currentValue
+                    )
+                    break
                   }
-                  
-                  let arrOfValues = []
-                  arrFromState.forEach(item => {
-                    let cellX = item.slice(1)
-                    let foundValue = state[item[0]] && 
-                                    state[item[0]][cellX] && 
-                                    state[item[0]][cellX].value ? 
-                                    +state[item[0]][cellX].value : 0
-                    console.log("arrOfValues", arrOfValues)
-                    arrOfValues.push(foundValue)
-                  })
-                  console.log("arrOfValues", arrOfValues)
-                  
-                  operation = formula.match(/(\s*SUM|\s*DIFF|\s*PROD|\s*DIV)/g)[0].trim().toLowerCase()
-                  console.log("operation", operation)
-                  switch(operation){
-                      case ('sum'): { 
-                        console.log("sum")                       
-                        _value = arrOfValues.reduce((prevValue, currentValue) => 
-                          prevValue + currentValue
-                        )
-                        console.log("sum", _value)
-                        break
-                      }
-                      case ('diff'): {
-                        _value = arrOfValues.reduce((prevValue, currentValue) => 
-                          prevValue - currentValue
-                        )
-                        break
-                      }
-                      case ('prod'): {
-                        _value = arrOfValues.reduce((prevValue, currentValue) => 
-                          prevValue * currentValue
-                        )
-                        break
-                      }
-                      case ('div'): {
-                        _value = arrOfValues.reduce((prevValue, currentValue) => 
-                          prevValue / currentValue
-                        )
-                        break
-                      }
-                      default: _value = eval(updatedFormula.substring(1))
-                    }
-                    console.log("sum res", _value)
-                    return {formula: formula,
-                      value: _value,
-                      className: 'cell'}
+                  case ('diff'): {
+                    _value = arrOfValues.reduce((prevValue, currentValue) => 
+                      prevValue - currentValue
+                    )
+                    break
+                  }
+                  case ('prod'): {
+                    _value = arrOfValues.reduce((prevValue, currentValue) => 
+                      prevValue * currentValue
+                    )
+                    break
+                  }
+                  case ('div'): {
+                    _value = arrOfValues.reduce((prevValue, currentValue) => 
+                      prevValue / currentValue
+                    )
+                    break
+                  }
+                  default: _value = eval(updatedFormula.substring(1))
                 }
-
-              let matches = formula.match(/[A-Z][1-9]+/g) || []
-              console.log("matches", matches)
-              if (matches.length){
-                matches.forEach(match => {
-                  let cellX = match.slice(1)
-                  let foundValue = state[match[0]] && 
-                                  state[match[0]][cellX] && 
-                                  state[match[0]][cellX].value ? 
-                                  state[match[0]][cellX].value : '0'
-                  console.log("foundValue", foundValue)
-                  updatedFormula = updatedFormula.replace(match, foundValue)
-                })
-                console.log("updatedFormula", updatedFormula)
-                _value = eval(updatedFormula.substring(1)) 
                 return {formula: formula,
                   value: _value,
-                  className: 'cell'}                
-              } else _value = eval(formula.substring(1))
-              console.log("_value", _value)
-              return {formula: formula,
-                      value: _value,
-                      className: 'cell'}
-            } catch(e) {
-                return {formula: formula,
-                  value: "error",
-                  className: 'cell-error'}
-                }
-            }  else if(formula.charAt(0) !== '=' && formula.search(/\D/g) >=0){ 
-              console.log("value=formula", formula, typeof formula)        
-              return {...stringCell}            
-            } else if(formula.charAt(0) !== '=' ){ 
-              console.log("value=formula", formula, typeof formula)        
-              return {...stringCell,
-                      className: 'cell'
-                    }            
+                  className: 'cell'}
             }
+
+          let matches = formula.match(/[A-Z][1-9]+/g) || []
+          if (matches.length){
+            matches.forEach(match => {
+              let cellX = match.slice(1)
+              let foundValue = state[match[0]] && 
+                              state[match[0]][cellX] && 
+                              state[match[0]][cellX].value ? 
+                              state[match[0]][cellX].value : '0'
+              updatedFormula = updatedFormula.replace(match, foundValue)
+            })
+            _value = eval(updatedFormula.substring(1)) 
+            return {formula: formula,
+              value: _value,
+              className: 'cell'}                
+          } else _value = eval(formula.substring(1))
+          return {formula: formula,
+                  value: _value,
+                  className: 'cell'}
+        } catch(e) {
+            return {formula: formula,
+              value: "error",
+              className: 'cell-error'}
+            }
+        }  else if(formula.charAt(0) !== '=' && formula.search(/\D/g) >=0){ 
+          return {...stringCell}            
+        } else if(formula.charAt(0) !== '=' ){ 
+          return {...stringCell,
+                  className: 'cell'
+                }            
+        }
     }
   
     cellUpdate = (state, changedCell, formula) => {
       let id = "" + changedCell.id
-      console.log("id", id)    
       let upDatedCell = Object.assign(
         {}, changedCell, this.calculateValue(state, formula, id))
-      console.log("stateCopy", state, id[0] )
-      console.log("upDatedCell", upDatedCell )
       let cellX = id.slice(1)
       if (state[id[0]] === undefined) 
-        state[id[0]]={};
+        state[id[0]]={}; // creating key for new column
       state[id[0]][cellX] = upDatedCell      
   
-      for (var row in state){
+      for (var row in state){ // searching for cells which formulas include value of updated cell
         for (var item in state[row]){ 
           let currentItem = state[row][item]
           let formulaMatch = currentItem.formula.search(/^(=\s*SUM|=\s*DIFF|=\s*PROD|=\s*DIV)\s*\(\s*[A-Z][0-9]+\s*:\s*[A-Z][0-9]+\s*\)/g) >= 0       
@@ -335,15 +308,13 @@ class MathTable extends Component {
             currentItem.formula.indexOf(changedCell.id) > -1 &&
             currentItem.id !== changedCell.id ){
               state = this.cellUpdate( state, currentItem, currentItem.formula)
-          } else if (currentItem.id !== changedCell.id && formulaMatch) {
+          } else if (currentItem.id !== changedCell.id && formulaMatch) { // cells with range in formula
             let start = currentItem.formula.match(/[A-Z][0-9]/g)[0]                  
             let end = currentItem.formula.match(/[A-Z][0-9]/g)[1] || start
             let startX = start.slice(1)
             let endX = end.slice(1)
             let arrFromState = this.getSelectedCells(startX, start[0], endX, end[0])
-            console.log("arrFromState", arrFromState)
             if (arrFromState.indexOf(id) >= 0){
-              console.log("ID FOUND")
               state = this.cellUpdate( state, currentItem, currentItem.formula)
             }            
           }               
@@ -353,14 +324,11 @@ class MathTable extends Component {
     }
   
     updateState = (_currentCell, _formula) => {
-      console.log("first cell", _currentCell, _formula)
       if (!_formula) return;
       let prevState = JSON.parse(JSON.stringify(this.state.table));
       let formula = "" + _formula      
       let newState = this.cellUpdate(prevState, _currentCell, formula);
-      console.log("newState", newState, prevState, this.state.table)
       if ( newState !== this.state.table){
-         console.log("newState +counter", newState)
         this.setState (prevstate => ({
           ...prevstate,
           table: newState,
@@ -369,7 +337,7 @@ class MathTable extends Component {
       }     
     }
 
-    cellTable = ( colStart, colEnd, rowStart, rowEnd) => {
+    cellTable = ( colStart, colEnd, rowStart, rowEnd) => { // for render
       let arrayOfRows = []    
       for ( let x = rowStart; x <= rowEnd; x++ ){
           let arrayOfCells = []
@@ -385,7 +353,6 @@ class MathTable extends Component {
 
   
     render(){
-      console.log("render state", this.state)
       let { selection, currentCell, selectionInFormula, counter } = this.state
       let savingStatus = ""
       if (counter === 0) {
@@ -405,7 +372,7 @@ class MathTable extends Component {
           y: selectionInFormula.endY
         }}
 
-      let data = this.cellTable("@", "Z", 0, 40) 
+      let data = this.cellTable("@", "Z", 0, 40) // here amount of rows and columns can be set
       let list = data.map((item, i)=> {
               return (
                   <tr key={i} className={i === 0 ? "row-first" : "row"} >
@@ -420,7 +387,7 @@ class MathTable extends Component {
                             formula: null,
                             className: 'cell-title'                          
                         }          
-                        if (x == 0)
+                        if (x == 0) // cell - name of columns
                           return (
                               <Cell key={key}                              
                               cellFromState={
@@ -432,7 +399,7 @@ class MathTable extends Component {
                               isEdited = {currentCell.isEdited}                             
                               />
                           )
-                        else if (y == "@")
+                        else if (y == "@") // cell - name of rows
                         return(
                           <Cell key={key}                          
                           cellFromState={
@@ -444,7 +411,7 @@ class MathTable extends Component {
                           isEdited = {currentCell.isEdited}                              
                           />
                         )
-                        else return (
+                        else return ( // average cell
                           <Cell 
                             key={key} 
                             update={this.updateState}
@@ -455,6 +422,7 @@ class MathTable extends Component {
                             continueSelecting = {this.continueSelecting}
                             stopSelecting = {this.stopSelecting}
                             isFirst = {selection.startX && ((selection.startY + selection.startX) === key)}
+                            // active means selected not while editing formula
                             active = {!currentCell.isEdited && selection.selectedCells.some(x => x == key)}
                             isSelected = {currentCell.isEdited && selectionInFormula.selectedCells.some(x => x == key)}
                             selectionRange = {_selectionRange}

@@ -7,7 +7,6 @@ export default {
         },
         table: {
             id: null,
-            item: null,
             title: null,
             table: {},
             error: null,

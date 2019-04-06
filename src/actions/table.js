@@ -23,8 +23,6 @@ export function getSheet ( id ) {
             
             let {data} = await axios(`http://localhost:3000/states?id=${id}`
             )                
-            console.log("toDoList", data[0])
-            // localStorage.setItem("toDoList", data)
             dispatch (getSheetRequestSuccess(data[0]))
         }
         catch(e){
@@ -89,7 +87,6 @@ export function updateItem (payload, id) {
     return async function (dispatch){
         dispatch (putSheetRequest())
         try {     
-            console.log("payload", payload, id)
             let {data} = await axios(`http://localhost:3000/states/${id}`,
                 {
                     method: "PATCH",
@@ -98,7 +95,6 @@ export function updateItem (payload, id) {
                     },
                     data: payload
                 })
-                console.log("update", data)
             dispatch (putSheetRequestSuccess(data))
         }
         catch(e){
